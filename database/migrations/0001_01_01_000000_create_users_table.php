@@ -12,24 +12,28 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('users', function (Blueprint $table) {
-            $table->id();
-            $table->string('name');
-            $table->string('email')->unique();
-            $table->timestamp('email_verified_at')->nullable();
-            $table->string('password');
-            $table->rememberToken();
+            // Khóa chính: Địa chỉ ví
+            $table->string('wallet_address', 42)->primary();
+            
+            // --- 2 CỘT MỚI THÊM VÀO ĐỂ ĐĂNG NHẬP ---
+            $table->string('email')->unique()->nullable()->comment('Tên đăng nhập');
+            $table->string('password')->nullable()->comment('Mật khẩu (sẽ được mã hóa)');
+            // ---------------------------------------
+
+            // Các cột thông tin chi tiết (giữ nguyên như cũ)
+            $table->text('description')->nullable()->comment('Nội dung chi tiết về chương trình');
+            $table->string('image_url', 255)->nullable()->comment('Link ảnh bìa chiến dịch');
+            $table->timestamp('start_date')->nullable()->comment('Ngày bắt đầu');
+            $table->timestamp('end_date')->nullable()->comment('Ngày kết thúc dự kiến');
+            $table->integer('status')->default(0)->comment('0: Nháp, 1: Đang chạy, 2: Đã hoàn thành, 3: Đã đóng');
+            
             $table->timestamps();
         });
 
-        Schema::create('password_reset_tokens', function (Blueprint $table) {
-            $table->string('email')->primary();
-            $table->string('token');
-            $table->timestamp('created_at')->nullable();
-        });
-
+        // Bảng sessions (giữ nguyên)
         Schema::create('sessions', function (Blueprint $table) {
             $table->string('id')->primary();
-            $table->foreignId('user_id')->nullable()->index();
+            $table->string('user_id', 42)->nullable()->index(); 
             $table->string('ip_address', 45)->nullable();
             $table->text('user_agent')->nullable();
             $table->longText('payload');
@@ -43,7 +47,6 @@ return new class extends Migration
     public function down(): void
     {
         Schema::dropIfExists('users');
-        Schema::dropIfExists('password_reset_tokens');
         Schema::dropIfExists('sessions');
     }
 };

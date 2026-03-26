@@ -2,7 +2,13 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\FundController;
+use App\Http\Controllers\AuthController;
 
+// --- CÁC ROUTE ĐĂNG NHẬP / ĐĂNG XUẤT ---
+Route::get('/login', [AuthController::class, 'showLogin'])->name('login');
+Route::post('/login', [AuthController::class, 'processLogin']);
+Route::get('/logout', [AuthController::class, 'logout'])->name('logout');
+// ---------------------------------------
 
 Route::get('/', function () {
     return view('welcome');
