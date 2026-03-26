@@ -238,17 +238,18 @@
                 <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
 
                     <div class="col">
-                        <div class="card card-custom h-100 d-flex flex-column">
-                            <div class="aspect-4-3">
-                                <img src="{{ asset('img/admin/quy-1.jpg') }}" alt="Giữ lại thị lực cho cậu bé Duy Khang">
-                                <!-- <span class="tag-badge">Y tế</span> -->
+                        <a href="/detail" class="text-decoration-none">
+                            <div class="card card-custom h-100 d-flex flex-column border-0 shadow-sm">
+                                <div class="aspect-4-3">
+                                    <img src="{{ asset('img/admin/quy-1.jpg') }}" alt="Giữ lại thị lực cho cậu bé Duy Khang">
+                                </div>
+                                <div class="card-body d-flex flex-column p-4">
+                                    <h5 class="card-title fw-bold mb-4 text-dark" style="font-size: 1.2rem; line-height: 1.5; text-align: center;">
+                                        Giữ lại thị lực cho cậu bé Duy Khang
+                                    </h5>
+                                </div>
                             </div>
-                            <div class="card-body d-flex flex-column p-4">
-                                <h5 class="card-title fw-bold mb-4 text-dark" style="font-size: 1.2rem; line-height: 1.5; text-align: center;">
-                                    Giữ lại thị lực cho cậu bé Duy Khang
-                                </h5>
-                            </div>
-                        </div>
+                        </a>
                     </div>
 
                     <div class="col">
