@@ -13,7 +13,6 @@
     
     <style>
         body { font-family: 'Inter', sans-serif; }
-        /* Hiệu ứng mượt mà khi chuyển tab */
         .fade-in { animation: fadeIn 0.4s ease-out forwards; opacity: 0; }
         @keyframes fadeIn {
             from { opacity: 0; transform: translateY(10px); }
@@ -21,7 +20,6 @@
         }
         .delay-100 { animation-delay: 100ms; }
         
-        /* Tùy chỉnh thanh cuộn */
         ::-webkit-scrollbar { width: 6px; height: 6px; }
         ::-webkit-scrollbar-track { background: #f1f5f9; }
         ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
@@ -150,12 +148,15 @@
                     </button>
                 </div>
                 
-                <div class="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden">
-                    <table class="w-full text-left whitespace-nowrap">
-                        <thead class="bg-slate-50 border-b border-slate-100 text-xs text-slate-500 uppercase">
+                <div class="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden overflow-x-auto">
+                    <table class="w-full text-left whitespace-nowrap min-w-[1000px]">
+                        <thead class="bg-slate-50 border-b border-slate-100 text-xs text-slate-500 uppercase tracking-wider">
                             <tr>
                                 <th class="px-6 py-4">Tên Quỹ</th>
-                                <th class="px-6 py-4">Tiến độ (ETH)</th>
+                                <th class="px-6 py-4">Mô tả chi tiết</th>
+                                <th class="px-6 py-4">Link Ảnh</th>
+                                <th class="px-6 py-4">Ngày bắt đầu</th>
+                                <th class="px-6 py-4">Ngày kết thúc</th>
                                 <th class="px-6 py-4">Trạng thái</th>
                                 <th class="px-6 py-4 text-center">Hành động</th>
                             </tr>
@@ -164,25 +165,46 @@
                             <tr class="hover:bg-slate-50 group">
                                 <td class="px-6 py-4 font-semibold text-slate-800">Xây Trường Vùng Cao</td>
                                 <td class="px-6 py-4">
-                                    <div class="flex justify-between text-xs mb-1"><span class="text-indigo-600">3.5 ETH</span><span class="text-slate-500">/ 5.0 ETH</span></div>
-                                    <div class="w-40 h-2 bg-slate-100 rounded-full"><div class="bg-indigo-500 h-full rounded-full" style="width: 70%"></div></div>
+                                    <div class="max-w-[250px] truncate text-sm text-slate-500" title="Hỗ trợ xây dựng điểm trường mầm non tại xã Tả Sử Choóng, tỉnh Hà Giang để các em có nơi học tập kiên cố.">
+                                        Hỗ trợ xây dựng điểm trường mầm non tại xã Tả Sử Choóng...
+                                    </div>
                                 </td>
-                                <td class="px-6 py-4"><span class="px-3 py-1 text-xs rounded-full bg-emerald-100 text-emerald-700">Đang hoạt động</span></td>
+                                <td class="px-6 py-4">
+                                    <a href="#" class="inline-flex items-center text-indigo-500 hover:text-indigo-700 text-sm transition-colors">
+                                        <i class='bx bx-image-alt mr-1 text-lg'></i> Xem ảnh
+                                    </a>
+                                </td>
+                                <td class="px-6 py-4 text-sm text-slate-600">01/05/2026</td>
+                                <td class="px-6 py-4 text-sm text-slate-600">30/08/2026</td>
+                                <td class="px-6 py-4">
+                                    <span class="px-3 py-1 text-xs rounded-full bg-emerald-100 text-emerald-700">Đang hoạt động</span>
+                                </td>
                                 <td class="px-6 py-4 text-center">
-                                    <button class="text-slate-400 hover:text-blue-600 mx-1"><i class='bx bx-edit text-xl'></i></button>
-                                    <button class="text-slate-400 hover:text-rose-600 mx-1"><i class='bx bx-trash text-xl'></i></button>
+                                    <button onclick="openEditTab(this)" class="text-slate-400 hover:text-blue-600 mx-1 transition-colors" title="Chỉnh sửa"><i class='bx bx-edit text-xl'></i></button>
+                                    <button onclick="deleteFund(this)" class="text-slate-400 hover:text-rose-600 mx-1 transition-colors" title="Xóa"><i class='bx bx-trash text-xl'></i></button>
                                 </td>
                             </tr>
+                            
                             <tr class="hover:bg-slate-50 group">
                                 <td class="px-6 py-4 font-semibold text-slate-800">Quỹ Y Tế Cộng Đồng</td>
                                 <td class="px-6 py-4">
-                                    <div class="flex justify-between text-xs mb-1"><span class="text-emerald-600">10.0 ETH</span><span class="text-slate-500">/ 10.0 ETH</span></div>
-                                    <div class="w-40 h-2 bg-slate-100 rounded-full"><div class="bg-emerald-500 h-full rounded-full" style="width: 100%"></div></div>
+                                    <div class="max-w-[250px] truncate text-sm text-slate-500" title="Chi trả viện phí cho các bệnh nhi có hoàn cảnh đặc biệt khó khăn tại bệnh viện Nhi Đồng.">
+                                        Chi trả viện phí cho các bệnh nhi có hoàn cảnh đặc biệt...
+                                    </div>
                                 </td>
-                                <td class="px-6 py-4"><span class="px-3 py-1 text-xs rounded-full bg-blue-100 text-blue-700">Hoàn thành</span></td>
+                                <td class="px-6 py-4">
+                                    <a href="#" class="inline-flex items-center text-indigo-500 hover:text-indigo-700 text-sm transition-colors">
+                                        <i class='bx bx-image-alt mr-1 text-lg'></i> Xem ảnh
+                                    </a>
+                                </td>
+                                <td class="px-6 py-4 text-sm text-slate-600">10/01/2026</td>
+                                <td class="px-6 py-4 text-sm text-slate-600">10/03/2026</td>
+                                <td class="px-6 py-4">
+                                    <span class="px-3 py-1 text-xs rounded-full bg-blue-100 text-blue-700">Hoàn thành</span>
+                                </td>
                                 <td class="px-6 py-4 text-center">
-                                    <button class="text-slate-400 hover:text-blue-600 mx-1"><i class='bx bx-edit text-xl'></i></button>
-                                    <button class="text-slate-400 hover:text-rose-600 mx-1"><i class='bx bx-trash text-xl'></i></button>
+                                    <button onclick="openEditTab(this)" class="text-slate-400 hover:text-blue-600 mx-1 transition-colors" title="Chỉnh sửa"><i class='bx bx-edit text-xl'></i></button>
+                                    <button onclick="deleteFund(this)" class="text-slate-400 hover:text-rose-600 mx-1 transition-colors" title="Xóa"><i class='bx bx-trash text-xl'></i></button>
                                 </td>
                             </tr>
                         </tbody>
@@ -223,19 +245,19 @@
             </div>
 
             <div id="tao-quy" class="page-section hidden p-8 fade-in">
-                <form action="#" class="max-w-5xl mx-auto flex flex-col lg:flex-row gap-8">
+                <form action="#" onsubmit="event.preventDefault(); alert('Chiến dịch đã được đăng thành công!');" class="max-w-5xl mx-auto flex flex-col lg:flex-row gap-8">
                     <div class="flex-1 space-y-6">
                         <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100">
                             <h2 class="text-lg font-bold text-slate-800 mb-4 border-b border-slate-100 pb-4">Thông tin chiến dịch</h2>
                             <div class="space-y-4">
                                 <div>
                                     <label class="block text-sm font-medium text-slate-700 mb-1">Tên quỹ <span class="text-rose-500">*</span></label>
-                                    <input type="text" placeholder="Nhập tên quỹ..." class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-lg outline-none focus:border-indigo-500 text-sm">
+                                    <input type="text" placeholder="Nhập tên quỹ..." required class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-lg outline-none focus:border-indigo-500 text-sm">
                                 </div>
                                 <div class="grid grid-cols-2 gap-4">
                                     <div>
                                         <label class="block text-sm font-medium text-slate-700 mb-1">Mục tiêu (ETH) <span class="text-rose-500">*</span></label>
-                                        <input type="number" placeholder="0.00" class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-lg outline-none focus:border-indigo-500 text-sm">
+                                        <input type="number" step="0.01" min="0" placeholder="0.00" required class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-lg outline-none focus:border-indigo-500 text-sm">
                                     </div>
                                     <div>
                                         <label class="block text-sm font-medium text-slate-700 mb-1">Danh mục</label>
@@ -264,8 +286,69 @@
                             </label>
                         </div>
                         <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100">
-                            <button type="button" onclick="alert('Chiến dịch đã được đăng thành công!')" class="w-full px-4 py-3 bg-indigo-600 text-white text-sm font-semibold rounded-lg hover:bg-indigo-700 transition-all flex items-center justify-center gap-2 mb-3">
+                            <button type="submit" class="w-full px-4 py-3 bg-indigo-600 text-white text-sm font-semibold rounded-lg hover:bg-indigo-700 transition-all flex items-center justify-center gap-2 mb-3">
                                 <i class='bx bx-send'></i> Đăng Chiến Dịch
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+
+            <div id="edit-quy" class="page-section hidden p-8 fade-in">
+                <form action="#" onsubmit="submitEdit(event)" class="max-w-5xl mx-auto flex flex-col lg:flex-row gap-8">
+                    <div class="flex-1 space-y-6">
+                        <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100">
+                            <h2 class="text-lg font-bold text-slate-800 mb-4 border-b border-slate-100 pb-4">Cập nhật chiến dịch</h2>
+                            <div class="space-y-4">
+                                <div>
+                                    <label class="block text-sm font-medium text-slate-700 mb-1">Tên quỹ <span class="text-rose-500">*</span></label>
+                                    <input type="text" id="edit-fund-name" required class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-lg outline-none focus:border-indigo-500 text-sm">
+                                </div>
+                                <div class="grid grid-cols-2 gap-4">
+                                    <div>
+                                        <label class="block text-sm font-medium text-slate-700 mb-1">Mục tiêu (ETH) <span class="text-rose-500">*</span></label>
+                                        <input type="number" step="0.01" min="0" value="5.00" required class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-lg outline-none focus:border-indigo-500 text-sm">
+                                    </div>
+                                    <div>
+                                        <label class="block text-sm font-medium text-slate-700 mb-1">Danh mục</label>
+                                        <select class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-lg outline-none focus:border-indigo-500 text-sm">
+                                            <option>Giáo dục</option>
+                                            <option>Y tế</option>
+                                            <option>Môi trường</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-slate-700 mb-1">Trạng thái</label>
+                                    <select class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-lg outline-none focus:border-indigo-500 text-sm">
+                                        <option value="active">Đang hoạt động</option>
+                                        <option value="completed">Hoàn thành</option>
+                                        <option value="draft">Tạm dừng</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-slate-700 mb-1">Mô tả chi tiết</label>
+                                    <textarea rows="5" class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-lg outline-none focus:border-indigo-500 text-sm">Hỗ trợ xây dựng điểm trường mầm non...</textarea>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="w-full lg:w-80 flex flex-col gap-6">
+                        <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100">
+                            <h2 class="text-base font-bold text-slate-800 mb-4">Hình ảnh đại diện</h2>
+                            <label class="flex flex-col items-center justify-center w-full h-40 border-2 border-slate-300 border-dashed rounded-xl cursor-pointer hover:border-indigo-400 bg-slate-50 transition-colors">
+                                <i class='bx bx-cloud-upload text-3xl text-indigo-400 mb-2'></i>
+                                <span class="text-sm text-slate-500">Đổi ảnh mới</span>
+                                <input type="file" class="hidden" accept="image/*" />
+                            </label>
+                        </div>
+                        <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100">
+                            <button type="submit" class="w-full px-4 py-3 bg-indigo-600 text-white text-sm font-semibold rounded-lg hover:bg-indigo-700 transition-all flex items-center justify-center gap-2 mb-3">
+                                <i class='bx bx-save'></i> Cập nhật Chiến Dịch
+                            </button>
+                            <button type="button" onclick="switchTab('quan-ly', document.querySelectorAll('.nav-item')[1])" class="w-full px-4 py-3 bg-white border border-slate-200 text-slate-600 text-sm font-semibold rounded-lg hover:bg-slate-50 transition-all flex items-center justify-center gap-2">
+                                Hủy bỏ
                             </button>
                         </div>
                     </div>
@@ -280,94 +363,122 @@
         async function handleDonation(campaignId, amountInEth) {
             if (typeof window.ethereum !== 'undefined') {
                 try {
-                    // 1. Kết nối ví MetaMask
                     const provider = new ethers.providers.Web3Provider(window.ethereum);
                     await provider.send("eth_requestAccounts", []);
                     const signer = provider.getSigner();
                     const userWallet = await signer.getAddress();
 
-                    // 2. Thông tin Smart Contract
                     const contractAddress = "ĐỊA_CHỈ_SMART_CONTRACT_CỦA_BẠN";
-                    // ABI là mảng JSON bạn lấy được sau khi compile code Solidity
-                    const contractABI = [
-                        "function donate(uint256 _campaignId) public payable"
-                    ];
+                    const contractABI = ["function donate(uint256 _campaignId) public payable"];
                     const contract = new ethers.Contract(contractAddress, contractABI, signer);
 
-                    // 3. Thực hiện giao dịch chuyển ETH
                     const amountWei = ethers.utils.parseEther(amountInEth.toString());
                     const tx = await contract.donate(campaignId, { value: amountWei });
                     
-                    console.log("Đang chờ xác nhận giao dịch trên Blockchain...");
-                    const receipt = await tx.wait(); // Đợi giao dịch đào xong
+                    console.log("Đang chờ xác nhận giao dịch...");
+                    const receipt = await tx.wait(); 
                     
-                    // 4. Lấy TxHash và gửi về Backend Laravel để lưu Database
                     const txHash = receipt.transactionHash;
                     await saveToDatabase(campaignId, userWallet, amountInEth, txHash);
 
                 } catch (error) {
-                    console.error("Lỗi giao dịch:", error);
-                    alert("Giao dịch bị hủy hoặc xảy ra lỗi!");
+                    console.error("Lỗi:", error);
+                    alert("Giao dịch bị hủy!");
                 }
             } else {
-                alert("Vui lòng cài đặt ví MetaMask!");
+                alert("Vui lòng cài đặt MetaMask!");
             }
         }
 
-        // Hàm gọi API Backend để lưu dữ liệu
         async function saveToDatabase(campaignId, wallet, amount, txHash) {
-            // Gọi route api của Laravel
             const response = await fetch('/api/donations/save', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
-                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content') // Dành cho web nội bộ
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
                 },
-                body: JSON.stringify({
-                    campaign_id: campaignId,
-                    wallet_address: wallet,
-                    amount: amount,
-                    tx_hash: txHash
-                })
+                body: JSON.stringify({ campaign_id: campaignId, wallet_address: wallet, amount: amount, tx_hash: txHash })
             });
 
             if (response.ok) {
-                alert("Quyên góp thành công! Cảm ơn bạn.");
-                window.location.reload(); // Load lại trang để cập nhật thanh tiến độ
+                alert("Thành công!");
+                window.location.reload(); 
             }
         }
 
-        // 1. Logic chuyển Tab (Menu)
-        function switchTab(tabId, element) {
-            // Xóa trạng thái active của tất cả menu
+        // ================= XỬ LÝ NÚT SỬA & XÓA =================
+        function deleteFund(btn) {
+            // Hiển thị popup xác nhận
+            const isConfirm = confirm("Bạn có chắc chắn muốn xóa quỹ này không? Dữ liệu không thể khôi phục.");
+            if(isConfirm) {
+                // Xóa dòng tr chứa nút bấm đó
+                let row = btn.closest('tr');
+                row.remove();
+                alert("Đã xóa chiến dịch thành công!");
+            }
+        }
+
+        function openEditTab(btn) {
+            // Lấy tên quỹ từ bảng để điền vào form sửa
+            let row = btn.closest('tr');
+            let fundName = row.querySelector('td:first-child').innerText.trim();
+            
+            // Điền tên vào ô Input của form sửa
+            document.getElementById('edit-fund-name').value = fundName;
+            
+            // Chuyển sang tab edit-quy (làm mờ các menu bên trái)
             const navItems = document.querySelectorAll('.nav-item');
             navItems.forEach(item => {
-                // Đưa về trạng thái bình thường (xám)
                 item.className = "nav-item flex items-center px-4 py-3 rounded-xl hover:bg-slate-800 hover:text-white transition-colors group";
                 const icon = item.querySelector('i');
                 if(icon) icon.className = icon.className.replace('text-white', 'group-hover:text-indigo-400').replace('bxs-', 'bx-');
             });
 
-            // Gắn trạng thái active cho menu được click
+            const pages = document.querySelectorAll('.page-section');
+            pages.forEach(page => page.classList.add('hidden'));
+
+            // Hiện trang sửa
+            document.getElementById('edit-quy').classList.remove('hidden');
+
+            // Cập nhật Header
+            document.getElementById('header-title').innerText = "Chỉnh sửa Quỹ Từ Thiện";
+            document.getElementById('header-subtitle').innerText = "Cập nhật lại thông tin chiến dịch đã chọn";
+        }
+
+        function submitEdit(event) {
+            event.preventDefault(); // Chặn tải lại trang
+            alert('Cập nhật thông tin chiến dịch thành công!');
+            // Quay lại trang Quản lý
+            switchTab('quan-ly', document.querySelectorAll('.nav-item')[1]);
+        }
+        // ========================================================
+
+        // 1. Logic chuyển Tab (Menu chính)
+        function switchTab(tabId, element) {
+            const navItems = document.querySelectorAll('.nav-item');
+            navItems.forEach(item => {
+                item.className = "nav-item flex items-center px-4 py-3 rounded-xl hover:bg-slate-800 hover:text-white transition-colors group";
+                const icon = item.querySelector('i');
+                if(icon) icon.className = icon.className.replace('text-white', 'group-hover:text-indigo-400').replace('bxs-', 'bx-');
+            });
+
             if(element) {
                 element.className = "nav-item flex items-center px-4 py-3 bg-gradient-to-r from-indigo-500 to-purple-600 text-white rounded-xl shadow-lg shadow-indigo-500/30 transition-all hover:scale-[1.02]";
                 const activeIcon = element.querySelector('i');
                 if(activeIcon) activeIcon.className = activeIcon.className.replace('group-hover:text-indigo-400', 'text-white').replace('bx-', 'bxs-');
             }
 
-            // Ẩn tất cả các trang
             const pages = document.querySelectorAll('.page-section');
             pages.forEach(page => page.classList.add('hidden'));
 
-            // Hiện trang được chọn
             document.getElementById(tabId).classList.remove('hidden');
 
-            // Cập nhật Tiêu đề Header
             const titles = {
                 'dashboard': { title: 'Tổng quan hệ thống', sub: 'Theo dõi tiến độ và các khoản quyên góp' },
                 'quan-ly': { title: 'Quản lý Quỹ Từ Thiện', sub: 'Quản lý, chỉnh sửa và theo dõi trạng thái' },
                 'lich-su': { title: 'Lịch sử Quyên Góp', sub: 'Danh sách các giao dịch mạng lưới ETH' },
-                'tao-quy': { title: 'Tạo Chiến Dịch Mới', sub: 'Khởi tạo một quỹ từ thiện mới lên hệ thống' }
+                'tao-quy': { title: 'Tạo Chiến Dịch Mới', sub: 'Khởi tạo một quỹ từ thiện mới lên hệ thống' },
+                'edit-quy': { title: 'Chỉnh sửa Quỹ Từ Thiện', sub: 'Cập nhật lại thông tin chiến dịch đã chọn' }
             };
             
             document.getElementById('header-title').innerText = titles[tabId].title;
@@ -376,24 +487,19 @@
 
         // 2. Logic Đăng xuất
         function handleLogout() {
-            // Hiển thị hộp thoại xác nhận
             const isConfirm = confirm("Bạn có chắc chắn muốn đăng xuất khỏi trang Quản trị?");
             if(isConfirm) {
-                // Chuyển hướng về trang đăng nhập (Giả lập)
-                // Nếu bạn làm Laravel, sau này sửa thành: window.location.href = '/logout';
                 alert("Đăng xuất thành công! Chuyển hướng về trang chủ...");
                 window.location.href = "#login"; 
             }
         }
 
-        // 3. Logic vẽ Biểu đồ Chart.js (Chỉ chạy 1 lần khi load)
+        // 3. Chart.js
         document.addEventListener('DOMContentLoaded', function() {
             const ctx = document.getElementById('fundChart').getContext('2d');
-            
             const gradientBlue = ctx.createLinearGradient(0, 0, 0, 400);
             gradientBlue.addColorStop(0, 'rgba(99, 102, 241, 0.9)'); 
             gradientBlue.addColorStop(1, 'rgba(99, 102, 241, 0.3)');
-            
             const gradientGray = ctx.createLinearGradient(0, 0, 0, 400);
             gradientGray.addColorStop(0, 'rgba(203, 213, 225, 0.5)');
             gradientGray.addColorStop(1, 'rgba(203, 213, 225, 0.2)');
@@ -408,13 +514,9 @@
                     ]
                 },
                 options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
+                    responsive: true, maintainAspectRatio: false,
                     plugins: { legend: { position: 'top' } },
-                    scales: {
-                        y: { beginAtZero: true, grid: { color: '#f1f5f9' } },
-                        x: { grid: { display: false } }
-                    }
+                    scales: { y: { beginAtZero: true, grid: { color: '#f1f5f9' } }, x: { grid: { display: false } } }
                 }
             });
         });
