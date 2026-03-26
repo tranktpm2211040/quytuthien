@@ -6,5 +6,6 @@ use Illuminate\Database\Eloquent\Model;
 
 class Fund extends Model
 {
-    //
+    protected $fillable = ['name', 'goal_amount'];
+
 }
