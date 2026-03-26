@@ -38,7 +38,7 @@ class AuthController extends Controller
         $user = DB::table('users')->where('email', $request->email)->first();
         if ($user && Hash::check($request->password, $user->password)) {
             // Lưu phiên làm việc (Session) cho User
-            session(['logged_in' => true, 'role' => 'user', 'email' => $user->email, 'wallet' => $user->wallet_address]);
+            session(['logged_in' => true, 'role' => 'user', 'email' => $user->email, 'wallet' => $user->wallet_address, 'full_name' => $user->full_name]);
             return redirect('/'); // Chuyển hướng ra trang chủ người dùng
         }
 
@@ -51,5 +51,17 @@ class AuthController extends Controller
     {
         session()->flush(); // Xóa sạch thông tin đăng nhập
         return redirect('/login');
+    }
+
+    // --- ĐOẠN CODE BẠN VỪA HỎI ĐƯỢC ĐẶT Ở ĐÂY ---
+    // Hiển thị trang Hồ sơ người dùng
+    public function profile()
+    {
+        // Kiểm tra nếu chưa đăng nhập thì đá văng ra trang login
+        if (!session('logged_in')) {
+            return redirect('/login')->with('error', 'Vui lòng đăng nhập để xem hồ sơ.');
+        }
+
+        return view('profile');
     }
 }

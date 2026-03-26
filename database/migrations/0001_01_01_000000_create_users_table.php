@@ -16,6 +16,7 @@ return new class extends Migration
             $table->string('wallet_address', 42)->primary();
             
             // --- 2 CỘT MỚI THÊM VÀO ĐỂ ĐĂNG NHẬP ---
+            $table->string('full_name', 100)->nullable()->comment('Tên đầy đủ của người dùng');
             $table->string('email')->unique()->nullable()->comment('Tên đăng nhập');
             $table->string('password')->nullable()->comment('Mật khẩu (sẽ được mã hóa)');
             // ---------------------------------------

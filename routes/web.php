@@ -10,6 +10,8 @@ use App\Http\Controllers\Api\DonationController;
 Route::get('/login', [AuthController::class, 'showLogin'])->name('login');
 Route::post('/login', [AuthController::class, 'processLogin']);
 Route::get('/logout', [AuthController::class, 'logout'])->name('logout');
+
+Route::get('/profile', [AuthController::class, 'profile'])->name('profile');
 // ---------------------------------------
 
 Route::get('/', function () {
@@ -34,4 +36,5 @@ Route::prefix('admin')->name('admin.')->group(function () {
 
 
     Route::post('/donations/save', [DonationController::class, 'saveDonation']);
+
 });
