@@ -153,6 +153,7 @@
                         <thead class="bg-slate-50 border-b border-slate-100 text-xs text-slate-500 uppercase tracking-wider">
                             <tr>
                                 <th class="px-6 py-4">Tên Quỹ</th>
+                                <th class="px-6 py-4 text-indigo-600">Mục tiêu (ETH)</th>
                                 <th class="px-6 py-4">Mô tả chi tiết</th>
                                 <th class="px-6 py-4">Link Ảnh</th>
                                 <th class="px-6 py-4">Ngày bắt đầu</th>
@@ -162,51 +163,74 @@
                             </tr>
                         </thead>
                         <tbody class="divide-y divide-slate-100">
+                            @foreach($campaigns as $campaign)
                             <tr class="hover:bg-slate-50 group">
-                                <td class="px-6 py-4 font-semibold text-slate-800">Xây Trường Vùng Cao</td>
+                                <td class="px-6 py-4 font-semibold text-slate-800">{{ $campaign->title }}</td>
+                                
+                                <td class="px-6 py-4 font-bold text-indigo-600">
+                                    {{ number_format($campaign->goal_eth, 2) }} ETH
+                                </td>
+                                
                                 <td class="px-6 py-4">
-                                    <div class="max-w-[250px] truncate text-sm text-slate-500" title="Hỗ trợ xây dựng điểm trường mầm non tại xã Tả Sử Choóng, tỉnh Hà Giang để các em có nơi học tập kiên cố.">
-                                        Hỗ trợ xây dựng điểm trường mầm non tại xã Tả Sử Choóng...
+                                    <div class="max-w-[250px] truncate text-sm text-slate-500" title="{{ $campaign->description }}">
+                                        {{ \Illuminate\Support\Str::limit($campaign->description, 50) }}
                                     </div>
                                 </td>
+                                
                                 <td class="px-6 py-4">
-                                    <a href="#" class="inline-flex items-center text-indigo-500 hover:text-indigo-700 text-sm transition-colors">
-                                        <i class='bx bx-image-alt mr-1 text-lg'></i> Xem ảnh
+                                    @if($campaign->image_url)
+                                        <a href="{{ asset($campaign->image_url) }}" target="_blank" class="inline-flex items-center text-indigo-500 hover:text-indigo-700 text-sm transition-colors">
+                                            <i class='bx bx-image-alt mr-1 text-lg'></i> Xem ảnh
+                                        </a>
+                                    @else
+                                        <span class="text-slate-400 text-sm italic">Không có ảnh</span>
+                                    @endif
+                                </td>
+                                
+                                <td class="px-6 py-4 text-sm text-slate-600">
+                                    {{ $campaign->start_date ? \Carbon\Carbon::parse($campaign->start_date)->format('d/m/Y') : '---' }}
+                                </td>
+                                
+                                <td class="px-6 py-4 text-sm text-slate-600">
+                                    {{ $campaign->end_date ? \Carbon\Carbon::parse($campaign->end_date)->format('d/m/Y') : '---' }}
+                                </td>
+                                
+                                <td class="px-6 py-4">
+                                    @if($campaign->status == 1)
+                                        <span class="px-3 py-1 text-xs rounded-full bg-emerald-100 text-emerald-700">Đang hoạt động</span>
+                                    @elseif($campaign->status == 2)
+                                        <span class="px-3 py-1 text-xs rounded-full bg-blue-100 text-blue-700">Hoàn thành</span>
+                                    @else
+                                        <span class="px-3 py-1 text-xs rounded-full bg-slate-100 text-slate-700">Bản nháp</span>
+                                    @endif
+                                </td>
+                                
+                                <td class="px-6 py-4 text-center">
+                                    <button class="text-slate-400 hover:text-blue-600 mx-1 transition-colors" title="Chỉnh sửa"
+                                        data-id="{{ $campaign->id }}"
+                                        data-title="{{ $campaign->title }}"
+                                        data-goal="{{ $campaign->goal_eth }}"
+                                        data-category="{{ $campaign->category }}"
+                                        data-status="{{ $campaign->status }}"
+                                        data-desc="{{ $campaign->description }}"
+                                        onclick="openEditTab(this)">
+                                        <i class='bx bx-edit text-xl'></i>
+                                    </button>
+                                    
+                                    <a href="{{ route('admin.fund.delete', $campaign->id) }}" onclick="return confirm('Bạn có chắc chắn muốn xóa quỹ này không? Dữ liệu không thể khôi phục.')" class="inline-block text-slate-400 hover:text-rose-600 mx-1 transition-colors" title="Xóa">
+                                        <i class='bx bx-trash text-xl'></i>
                                     </a>
                                 </td>
-                                <td class="px-6 py-4 text-sm text-slate-600">01/05/2026</td>
-                                <td class="px-6 py-4 text-sm text-slate-600">30/08/2026</td>
-                                <td class="px-6 py-4">
-                                    <span class="px-3 py-1 text-xs rounded-full bg-emerald-100 text-emerald-700">Đang hoạt động</span>
-                                </td>
-                                <td class="px-6 py-4 text-center">
-                                    <button onclick="openEditTab(this)" class="text-slate-400 hover:text-blue-600 mx-1 transition-colors" title="Chỉnh sửa"><i class='bx bx-edit text-xl'></i></button>
-                                    <button onclick="deleteFund(this)" class="text-slate-400 hover:text-rose-600 mx-1 transition-colors" title="Xóa"><i class='bx bx-trash text-xl'></i></button>
+                            </tr>
+                            @endforeach
+
+                            @if($campaigns->isEmpty())
+                            <tr>
+                                <td colspan="8" class="px-6 py-8 text-center text-slate-500">
+                                    Chưa có chiến dịch nào trên hệ thống. Hãy tạo chiến dịch đầu tiên!
                                 </td>
                             </tr>
-                            
-                            <tr class="hover:bg-slate-50 group">
-                                <td class="px-6 py-4 font-semibold text-slate-800">Quỹ Y Tế Cộng Đồng</td>
-                                <td class="px-6 py-4">
-                                    <div class="max-w-[250px] truncate text-sm text-slate-500" title="Chi trả viện phí cho các bệnh nhi có hoàn cảnh đặc biệt khó khăn tại bệnh viện Nhi Đồng.">
-                                        Chi trả viện phí cho các bệnh nhi có hoàn cảnh đặc biệt...
-                                    </div>
-                                </td>
-                                <td class="px-6 py-4">
-                                    <a href="#" class="inline-flex items-center text-indigo-500 hover:text-indigo-700 text-sm transition-colors">
-                                        <i class='bx bx-image-alt mr-1 text-lg'></i> Xem ảnh
-                                    </a>
-                                </td>
-                                <td class="px-6 py-4 text-sm text-slate-600">10/01/2026</td>
-                                <td class="px-6 py-4 text-sm text-slate-600">10/03/2026</td>
-                                <td class="px-6 py-4">
-                                    <span class="px-3 py-1 text-xs rounded-full bg-blue-100 text-blue-700">Hoàn thành</span>
-                                </td>
-                                <td class="px-6 py-4 text-center">
-                                    <button onclick="openEditTab(this)" class="text-slate-400 hover:text-blue-600 mx-1 transition-colors" title="Chỉnh sửa"><i class='bx bx-edit text-xl'></i></button>
-                                    <button onclick="deleteFund(this)" class="text-slate-400 hover:text-rose-600 mx-1 transition-colors" title="Xóa"><i class='bx bx-trash text-xl'></i></button>
-                                </td>
-                            </tr>
+                            @endif
                         </tbody>
                     </table>
                 </div>
@@ -245,32 +269,42 @@
             </div>
 
             <div id="tao-quy" class="page-section hidden p-8 fade-in">
-                <form action="#" onsubmit="event.preventDefault(); alert('Chiến dịch đã được đăng thành công!');" class="max-w-5xl mx-auto flex flex-col lg:flex-row gap-8">
-                    <div class="flex-1 space-y-6">
+                @if ($errors->any())
+                    <div class="max-w-5xl mx-auto mb-4 p-4 bg-rose-50 border border-rose-200 text-rose-600 rounded-lg">
+                        <ul class="list-disc pl-5 mb-0">
+                            @foreach ($errors->all() as $error)
+                                <li>{{ $error }}</li>
+                            @endforeach
+                        </ul>
+                    </div>
+                @endif
+
+                <form action="{{ route('admin.fund.store') }}" method="POST" enctype="multipart/form-data" class="max-w-5xl mx-auto flex flex-col lg:flex-row gap-8">
+                    @csrf <div class="flex-1 space-y-6">
                         <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100">
                             <h2 class="text-lg font-bold text-slate-800 mb-4 border-b border-slate-100 pb-4">Thông tin chiến dịch</h2>
                             <div class="space-y-4">
                                 <div>
                                     <label class="block text-sm font-medium text-slate-700 mb-1">Tên quỹ <span class="text-rose-500">*</span></label>
-                                    <input type="text" placeholder="Nhập tên quỹ..." required class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-lg outline-none focus:border-indigo-500 text-sm">
+                                    <input type="text" name="title" placeholder="Nhập tên quỹ..." required class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-lg outline-none focus:border-indigo-500 text-sm">
                                 </div>
                                 <div class="grid grid-cols-2 gap-4">
                                     <div>
                                         <label class="block text-sm font-medium text-slate-700 mb-1">Mục tiêu (ETH) <span class="text-rose-500">*</span></label>
-                                        <input type="number" step="0.01" min="0" placeholder="0.00" required class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-lg outline-none focus:border-indigo-500 text-sm">
+                                        <input type="number" name="goal_eth" step="0.01" min="0" placeholder="0.00" required class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-lg outline-none focus:border-indigo-500 text-sm">
                                     </div>
                                     <div>
                                         <label class="block text-sm font-medium text-slate-700 mb-1">Danh mục</label>
-                                        <select class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-lg outline-none focus:border-indigo-500 text-sm">
-                                            <option>Giáo dục</option>
-                                            <option>Y tế</option>
-                                            <option>Môi trường</option>
+                                        <select name="category" class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-lg outline-none focus:border-indigo-500 text-sm">
+                                            <option value="Giáo dục">Giáo dục</option>
+                                            <option value="Y tế">Y tế</option>
+                                            <option value="Môi trường">Môi trường</option>
                                         </select>
                                     </div>
                                 </div>
                                 <div>
                                     <label class="block text-sm font-medium text-slate-700 mb-1">Mô tả chi tiết</label>
-                                    <textarea rows="6" placeholder="Viết câu chuyện..." class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-lg outline-none focus:border-indigo-500 text-sm"></textarea>
+                                    <textarea name="description" rows="6" placeholder="Viết câu chuyện..." required class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-lg outline-none focus:border-indigo-500 text-sm"></textarea>
                                 </div>
                             </div>
                         </div>
@@ -282,7 +316,7 @@
                             <label class="flex flex-col items-center justify-center w-full h-40 border-2 border-slate-300 border-dashed rounded-xl cursor-pointer hover:border-indigo-400 bg-slate-50 transition-colors">
                                 <i class='bx bx-cloud-upload text-3xl text-indigo-400 mb-2'></i>
                                 <span class="text-sm text-slate-500">Tải ảnh lên</span>
-                                <input type="file" class="hidden" accept="image/*" />
+                                <input type="file" name="image" class="hidden" accept="image/*" />
                             </label>
                         </div>
                         <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100">
@@ -295,40 +329,43 @@
             </div>
 
             <div id="edit-quy" class="page-section hidden p-8 fade-in">
-                <form action="#" onsubmit="submitEdit(event)" class="max-w-5xl mx-auto flex flex-col lg:flex-row gap-8">
+                <form action="{{ route('admin.fund.update') }}" method="POST" enctype="multipart/form-data" class="max-w-5xl mx-auto flex flex-col lg:flex-row gap-8">
+                    @csrf
+                    <input type="hidden" name="id" id="edit-fund-id">
+                    
                     <div class="flex-1 space-y-6">
                         <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100">
                             <h2 class="text-lg font-bold text-slate-800 mb-4 border-b border-slate-100 pb-4">Cập nhật chiến dịch</h2>
                             <div class="space-y-4">
                                 <div>
                                     <label class="block text-sm font-medium text-slate-700 mb-1">Tên quỹ <span class="text-rose-500">*</span></label>
-                                    <input type="text" id="edit-fund-name" required class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-lg outline-none focus:border-indigo-500 text-sm">
+                                    <input type="text" name="title" id="edit-fund-title" required class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-lg outline-none focus:border-indigo-500 text-sm">
                                 </div>
                                 <div class="grid grid-cols-2 gap-4">
                                     <div>
                                         <label class="block text-sm font-medium text-slate-700 mb-1">Mục tiêu (ETH) <span class="text-rose-500">*</span></label>
-                                        <input type="number" step="0.01" min="0" value="5.00" required class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-lg outline-none focus:border-indigo-500 text-sm">
+                                        <input type="number" name="goal_eth" id="edit-fund-goal" step="0.01" min="0" required class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-lg outline-none focus:border-indigo-500 text-sm">
                                     </div>
                                     <div>
                                         <label class="block text-sm font-medium text-slate-700 mb-1">Danh mục</label>
-                                        <select class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-lg outline-none focus:border-indigo-500 text-sm">
-                                            <option>Giáo dục</option>
-                                            <option>Y tế</option>
-                                            <option>Môi trường</option>
+                                        <select name="category" id="edit-fund-category" class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-lg outline-none focus:border-indigo-500 text-sm">
+                                            <option value="Giáo dục">Giáo dục</option>
+                                            <option value="Y tế">Y tế</option>
+                                            <option value="Môi trường">Môi trường</option>
                                         </select>
                                     </div>
                                 </div>
                                 <div>
                                     <label class="block text-sm font-medium text-slate-700 mb-1">Trạng thái</label>
-                                    <select class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-lg outline-none focus:border-indigo-500 text-sm">
-                                        <option value="active">Đang hoạt động</option>
-                                        <option value="completed">Hoàn thành</option>
-                                        <option value="draft">Tạm dừng</option>
+                                    <select name="status" id="edit-fund-status" class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-lg outline-none focus:border-indigo-500 text-sm">
+                                        <option value="1">Đang hoạt động</option>
+                                        <option value="2">Hoàn thành</option>
+                                        <option value="0">Bản nháp</option>
                                     </select>
                                 </div>
                                 <div>
                                     <label class="block text-sm font-medium text-slate-700 mb-1">Mô tả chi tiết</label>
-                                    <textarea rows="5" class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-lg outline-none focus:border-indigo-500 text-sm">Hỗ trợ xây dựng điểm trường mầm non...</textarea>
+                                    <textarea name="description" id="edit-fund-desc" rows="5" class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-lg outline-none focus:border-indigo-500 text-sm"></textarea>
                                 </div>
                             </div>
                         </div>
@@ -340,7 +377,7 @@
                             <label class="flex flex-col items-center justify-center w-full h-40 border-2 border-slate-300 border-dashed rounded-xl cursor-pointer hover:border-indigo-400 bg-slate-50 transition-colors">
                                 <i class='bx bx-cloud-upload text-3xl text-indigo-400 mb-2'></i>
                                 <span class="text-sm text-slate-500">Đổi ảnh mới</span>
-                                <input type="file" class="hidden" accept="image/*" />
+                                <input type="file" name="image" class="hidden" accept="image/*" />
                             </label>
                         </div>
                         <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100">
@@ -419,14 +456,15 @@
         }
 
         function openEditTab(btn) {
-            // Lấy tên quỹ từ bảng để điền vào form sửa
-            let row = btn.closest('tr');
-            let fundName = row.querySelector('td:first-child').innerText.trim();
+            // 1. Nhặt dữ liệu từ các thuộc tính data- của nút bấm
+            document.getElementById('edit-fund-id').value = btn.getAttribute('data-id');
+            document.getElementById('edit-fund-title').value = btn.getAttribute('data-title');
+            document.getElementById('edit-fund-goal').value = btn.getAttribute('data-goal');
+            document.getElementById('edit-fund-category').value = btn.getAttribute('data-category');
+            document.getElementById('edit-fund-status').value = btn.getAttribute('data-status');
+            document.getElementById('edit-fund-desc').value = btn.getAttribute('data-desc');
             
-            // Điền tên vào ô Input của form sửa
-            document.getElementById('edit-fund-name').value = fundName;
-            
-            // Chuyển sang tab edit-quy (làm mờ các menu bên trái)
+            // 2. Chuyển sang tab edit-quy
             const navItems = document.querySelectorAll('.nav-item');
             navItems.forEach(item => {
                 item.className = "nav-item flex items-center px-4 py-3 rounded-xl hover:bg-slate-800 hover:text-white transition-colors group";
@@ -437,10 +475,8 @@
             const pages = document.querySelectorAll('.page-section');
             pages.forEach(page => page.classList.add('hidden'));
 
-            // Hiện trang sửa
             document.getElementById('edit-quy').classList.remove('hidden');
 
-            // Cập nhật Header
             document.getElementById('header-title').innerText = "Chỉnh sửa Quỹ Từ Thiện";
             document.getElementById('header-subtitle').innerText = "Cập nhật lại thông tin chiến dịch đã chọn";
         }

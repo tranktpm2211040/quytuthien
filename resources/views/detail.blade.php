@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Chi tiết dự án - Duy Khang</title>
+    <title>Chi tiết dự án - {{ $campaign->title }}</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.5/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600;700&display=swap" rel="stylesheet">
     <style>
@@ -34,42 +34,36 @@
         <div class="row g-5">
             <div class="col-lg-7">
                 <div class="position-relative detail-carousel shadow-sm">
-                    <span class="badge-category">Y tế</span>
-                    <img src="{{ asset('img/admin/quy-1.jpg') }}" alt="Duy Khang">
+                    @if($campaign->category)
+                        <span class="badge-category">{{ $campaign->category }}</span>
+                    @endif
+                    <img src="{{ $campaign->image_url ? asset($campaign->image_url) : asset('img/admin/quy-1.jpg') }}" alt="{{ $campaign->title }}">
                 </div>
             </div>
 
             <div class="col-lg-5">
-                <h2 class="fw-bold mb-4" style="line-height: 1.3;">Giữ lại thị lực cho cậu bé Duy Khang</h2>
+                <h2 class="fw-bold mb-4" style="line-height: 1.3;">{{ $campaign->title }}</h2>
                 
                 <div class="donation-box shadow-sm">
-                    <!-- <div class="d-flex align-items-center mb-4">
-                        <img src="{{ asset('img/home/org_logo.png') }}" class="rounded-circle me-3" style="width: 45px; height: 45px; border: 1px solid #eee;">
-                        <div>
-                            <div class="fw-bold text-gn-pink">Quỹ Nâng bước tuổi thơ</div>
-                            <div class="small text-secondary">156 lượt ủng hộ</div>
-                        </div>
-                    </div> -->
-
                     <div class="d-flex justify-content-between mb-2">
                         <span class="text-secondary">Mục tiêu dự án</span>
-                        <span class="fw-bold">50.000.000₫</span>
+                        <span class="fw-bold">{{ number_format($campaign->goal_eth, 2) }} ETH</span>
                     </div>
 
                     <div class="progress mb-4">
-                        <div class="progress-bar" style="width: 32%"></div>
+                        <div class="progress-bar" style="width: 0%"></div>
                     </div>
 
                     <div class="d-flex justify-content-between align-items-end mb-4">
                         <span class="text-secondary">Đã đạt được</span>
-                        <span class="fs-3 fw-bold text-gn-pink">16.092.200₫</span>
+                        <span class="fs-3 fw-bold text-gn-pink">0.00 ETH</span>
                     </div>
 
                     <div class="row g-2">
                         <div class="col-12 col-md-5">
                             <div class="input-group h-100">
-                                <span class="input-group-text bg-white border-end-0 text-secondary small">VNĐ</span>
-                                <input type="text" class="form-control border-start-0 ps-0 fw-bold" value="50.000">
+                                <span class="input-group-text bg-white border-end-0 text-secondary small">ETH</span>
+                                <input type="number" step="0.01" min="0" class="form-control border-start-0 ps-0 fw-bold" placeholder="0.1">
                             </div>
                         </div>
                         <div class="col-6 col-md-7">
@@ -88,15 +82,12 @@
                 </ul>
                 <div class="tab-content border-0 p-2">
                     <div class="tab-pane fade show active" id="content">
-                        <h5 class="fw-bold mb-3 text-dark">Nỗi đau của cậu bé 5 tuổi</h5>
-                        <p class="text-secondary mb-4" style="line-height: 1.8;">
-                            Bé Duy Khang sinh ra trong một gia đình nghèo. Khi lên 3 tuổi, đôi mắt em bắt đầu có dấu hiệu mờ đi. 
-                            Các bác sĩ chẩn đoán em bị đục thủy tinh thể bẩm sinh và cần phẫu thuật gấp để giữ lại ánh sáng...
-                        </p>
-                        <p class="text-secondary" style="line-height: 1.8;">
-                            Chi phí phẫu thuật vượt quá khả năng của gia đình. Cha em làm thuê, mẹ em ở nhà chăm sóc hai anh em. 
-                            Rất mong các mạnh thường quân chung tay giúp em tìm lại đôi mắt sáng.
-                        </p>
+                        <h5 class="fw-bold mb-3 text-dark">Thông tin chi tiết</h5>
+                        
+                        <div class="text-secondary mb-4" style="line-height: 1.8;">
+                            {!! nl2br(e($campaign->description)) !!}
+                        </div>
+                        
                     </div>
                     <div class="tab-pane fade text-center py-5" id="donors">
                         <img src="https://cdn-icons-png.flaticon.com/512/102/102661.png" width="50" class="opacity-25 mb-3">
