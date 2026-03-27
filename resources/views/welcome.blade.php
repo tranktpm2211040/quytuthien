@@ -303,6 +303,46 @@
     @include('footer')
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.5/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/ethers/6.7.0/ethers.umd.min.js"></script>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        const connectWalletBtn = document.getElementById('connectWalletBtn');
+        const walletAddressText = document.getElementById('walletAddressText');
+
+        if(connectWalletBtn) {
+            connectWalletBtn.addEventListener('click', async () => {
+                // Kiểm tra xem trình duyệt có ví Web3 chưa
+                if (typeof window.ethereum !== 'undefined') {
+                    try {
+                        walletAddressText.innerText = "Đang kết nối...";
+                        
+                        // Yêu cầu kết nối
+                        const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
+                        const address = accounts[0];
+                        
+                        // Rút gọn địa chỉ ví (vd: 0x123...abcd)
+                        const shortAddress = address.slice(0, 5) + "..." + address.slice(-4);
+                        
+                        // Hiển thị lên nút
+                        walletAddressText.innerText = shortAddress;
+                        
+                        // Tùy chọn: Đổi màu nút khi kết nối thành công
+                        connectWalletBtn.classList.remove('btn-outline-dark');
+                        connectWalletBtn.classList.add('btn-success', 'text-white', 'border-0');
+
+                    } catch (error) {
+                        console.error("Lỗi:", error);
+                        walletAddressText.innerText = "Kết nối ví";
+                    }
+                } else {
+                    alert("Vui lòng cài đặt tiện ích ví MetaMask (hoặc ví tương tự) trên trình duyệt của bạn!");
+                }
+            });
+        }
+    });
+</script>
+
 </body>
 
 </html>
