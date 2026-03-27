@@ -71,22 +71,8 @@
                         <div class="progress-bar" style="width: 0%"></div>
                     </div>
 
-                    <div class="d-flex justify-content-between align-items-end mb-4">
-                        <span class="text-secondary">Đã đạt được</span>
-                        <span class="fs-3 fw-bold text-gn-pink">0.00 ETH</span>
-                    </div>
-
-                    <div class="row g-2">
-                        <div class="col-12 col-md-5">
-                            <div class="input-group h-100">
-                                <span class="input-group-text bg-white border-end-0 text-secondary small">ETH</span>
-                                <input type="number" step="0.01" min="0" class="form-control border-start-0 ps-0 fw-bold" placeholder="0.1">
-                            </div>
-                        </div>
-                        <div class="col-6 col-md-7">
-                            <button class="btn btn-gn-pink w-100 h-100">Ủng hộ</button>
-                        </div>
-                    </div>
+                  
+                     
                 </div>
             </div>
         </div>
