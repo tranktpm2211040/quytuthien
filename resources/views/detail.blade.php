@@ -50,6 +50,23 @@
                         <span class="fw-bold">{{ number_format($campaign->goal_eth, 2) }} ETH</span>
                     </div>
 
+
+
+                    <div class="row g-2">
+                        <div class="col-12 col-md-5">
+                            <div class="input-group h-100">
+                                <span class="input-group-text bg-white border-end-0 text-secondary small">VNĐ</span>
+                                <input type="number" id="donation-amount" class="form-control border-start-0 ps-0 fw-bold" value="50000" min="10000" step="10000">
+                            </div>
+                        </div>
+                        <div class="col-6 col-md-7">
+                            <button onclick="goToPayment()" class="btn btn-gn-pink w-100 h-100">Ủng hộ</button>
+                        </div>
+                    </div>
+
+
+
+
                     <div class="progress mb-4">
                         <div class="progress-bar" style="width: 0%"></div>
                     </div>
@@ -111,5 +128,22 @@
     @include('footer')
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.5/dist/js/bootstrap.bundle.min.js"></script>
+
+     
+    
+    <script>
+        function goToPayment() {
+            // Lấy số tiền người dùng nhập
+            const amount = document.getElementById('donation-amount').value;
+            
+            if(amount && amount >= 10000) {
+                // Chuyển hướng sang trang thanh toán, truyền theo số tiền
+                // Bạn thay '/thanh-toan' bằng url thật của trang thanh toán trong route Laravel nhé
+                window.location.href = `/thanh-toan?amount=${amount}&project_id=1`; 
+            } else {
+                alert('Vui lòng nhập số tiền hợp lệ (Tối thiểu 10.000 VNĐ)');
+            }
+        }
+    </script>
 </body>
 </html>
