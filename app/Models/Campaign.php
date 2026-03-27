@@ -13,6 +13,8 @@ class Campaign extends Model
     protected $fillable = [
         'contract_address',
         'title',
+        'goal_eth',
+        'category',
         'description',
         'image_url',
         'start_date',

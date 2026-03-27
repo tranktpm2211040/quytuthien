@@ -14,18 +14,16 @@ Route::get('/logout', [AuthController::class, 'logout'])->name('logout');
 Route::get('/profile', [AuthController::class, 'profile'])->name('profile');
 // ---------------------------------------
 
-Route::get('/', function () {
-    return view('welcome');
-});
+// --- ĐÃ SỬA DÒNG NÀY ---
+Route::get('/', [FundController::class, 'index'])->name('home');
+
 
 Route::post('/save-donation', [FundController::class, 'saveDonation'])->name('donation.save');
 
-// Route test tĩnh
-Route::get('/detail', function () {
-    return view('detail');
-});
+// Đường dẫn trang chi tiết (có nhận ID của quỹ)
+Route::get('/detail/{id}', [FundController::class, 'detail'])->name('fund.detail');
 
-//admin
+// Route admin
 Route::prefix('admin')->name('admin.')->group(function () {
 
     // Trang chủ Admin (Đường dẫn: /admin)
@@ -36,8 +34,11 @@ Route::prefix('admin')->name('admin.')->group(function () {
 
     // Xóa dự án (Đường dẫn: /admin/fund/delete/{id})
     Route::get('/fund/delete/{id}', [FundController::class, 'delete'])->name('fund.delete');
-
-
+    
+    // --- ĐÃ SỬA DÒNG NÀY: Xóa chữ admin/ và admin. ---
+    // Cập nhật dự án (Đường dẫn: /admin/fund/update)
+    Route::post('/fund/update', [FundController::class, 'update'])->name('fund.update');
+    // ---------------------------------------------------
 
     Route::post('/donations/save', [DonationController::class, 'saveDonation']);
 });
