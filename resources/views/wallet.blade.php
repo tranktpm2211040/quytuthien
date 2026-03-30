@@ -53,7 +53,7 @@
 
 <script>
     // 1. Lấy thông tin từ file .env của Laravel
-    const CONTRACT_ADDRESS = "{{ env('SMART_CONTRACT_ADDRESS', '0xE7d6c1468aeB1eff34635BaB283bd0120E7E774a') }}"; 
+    const CONTRACT_ADDRESS = "{{ env('SMART_CONTRACT_ADDRESS', '0xc57B9f5C6ca1c4CeC41d7c900a1aB22DbAca1a56') }}"; 
     
     // 2. Mảng ABI rút gọn từ file QuyTuThien.json của bạn
     const CONTRACT_ABI = [

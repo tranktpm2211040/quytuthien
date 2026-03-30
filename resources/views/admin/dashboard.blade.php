@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="vi">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -8,9 +9,11 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/ethers/5.7.2/ethers.umd.min.js"></script>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/ethers/6.7.0/ethers.umd.min.js"></script>
+
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    
+
     <style>
         body { font-family: 'Inter', sans-serif; }
         .fade-in { animation: fadeIn 0.4s ease-out forwards; opacity: 0; }
@@ -19,13 +22,13 @@
             to { opacity: 1; transform: translateY(0); }
         }
         .delay-100 { animation-delay: 100ms; }
-        
         ::-webkit-scrollbar { width: 6px; height: 6px; }
         ::-webkit-scrollbar-track { background: #f1f5f9; }
         ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
         ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
     </style>
 </head>
+
 <body class="bg-slate-50 flex h-screen overflow-hidden text-slate-800">
 
     <aside class="w-72 bg-[#0f172a] text-slate-300 flex flex-col transition-all duration-300 shadow-2xl z-20">
@@ -39,7 +42,7 @@
                 <i class='bx bxs-dashboard text-xl mr-3'></i>
                 <span class="font-medium">Tổng quan</span>
             </a>
-            
+
             <a href="#" onclick="switchTab('quan-ly', this)" class="nav-item flex items-center px-4 py-3 rounded-xl hover:bg-slate-800 hover:text-white transition-colors group">
                 <i class='bx bx-wallet text-xl mr-3 group-hover:text-indigo-400 transition-colors'></i>
                 <span class="font-medium">Quản lý Quỹ</span>
@@ -72,7 +75,7 @@
                 <h1 id="header-title" class="text-2xl font-bold text-slate-800">Tổng quan hệ thống</h1>
                 <p id="header-subtitle" class="text-sm text-slate-500 mt-1">Theo dõi tiến độ và các khoản quyên góp</p>
             </div>
-            
+
             <div class="flex items-center gap-4">
                 <button class="w-10 h-10 rounded-full bg-slate-100 flex items-center justify-center hover:bg-slate-200 transition-colors relative">
                     <i class='bx bx-bell text-xl text-slate-600'></i>
@@ -147,14 +150,14 @@
                         <i class='bx bx-plus'></i> Tạo Quỹ Mới
                     </button>
                 </div>
-                
+
                 <div class="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden overflow-x-auto">
                     <table class="w-full text-left whitespace-nowrap min-w-[1000px]">
                         <thead class="bg-slate-50 border-b border-slate-100 text-xs text-slate-500 uppercase tracking-wider">
                             <tr>
                                 <th class="px-6 py-4">Tên Quỹ</th>
                                 <th class="px-6 py-4 text-indigo-600">Mục tiêu (ETH)</th>
-                                <th class="px-6 py-4">Ví người nhận</th> 
+                                <th class="px-6 py-4">Ví người nhận</th>
                                 <th class="px-6 py-4">Mô tả</th>
                                 <th class="px-6 py-4">Trạng thái</th>
                                 <th class="px-6 py-4 text-center">Hành động</th>
@@ -164,35 +167,28 @@
                             @foreach($campaigns as $campaign)
                             <tr class="hover:bg-slate-50 group">
                                 <td class="px-6 py-4 font-semibold text-slate-800">{{ $campaign->title }}</td>
-                                
-                                <td class="px-6 py-4 font-bold text-indigo-600">
-                                    {{ number_format($campaign->goal_eth, 2) }} ETH
-                                </td>
-
+                                <td class="px-6 py-4 font-bold text-indigo-600">{{ number_format($campaign->goal_eth, 2) }} ETH</td>
                                 <td class="px-6 py-4 font-mono text-xs text-slate-500" title="{{ $campaign->receiver_wallet }}">
                                     @if($campaign->receiver_wallet)
-                                        {{ substr($campaign->receiver_wallet, 0, 6) }}...{{ substr($campaign->receiver_wallet, -4) }}
+                                    {{ substr($campaign->receiver_wallet, 0, 6) }}...{{ substr($campaign->receiver_wallet, -4) }}
                                     @else
-                                        <span class="text-rose-400 italic">Chưa có</span>
+                                    <span class="text-rose-400 italic">Chưa có</span>
                                     @endif
                                 </td>
-                                
                                 <td class="px-6 py-4">
                                     <div class="max-w-[200px] truncate text-sm text-slate-500" title="{{ $campaign->description }}">
                                         {{ \Illuminate\Support\Str::limit($campaign->description, 30) }}
                                     </div>
                                 </td>
-                                
                                 <td class="px-6 py-4">
                                     @if($campaign->status == 1)
-                                        <span class="px-3 py-1 text-xs rounded-full bg-emerald-100 text-emerald-700">Đang hoạt động</span>
+                                    <span class="px-3 py-1 text-xs rounded-full bg-emerald-100 text-emerald-700">Đang hoạt động</span>
                                     @elseif($campaign->status == 2)
-                                        <span class="px-3 py-1 text-xs rounded-full bg-blue-100 text-blue-700">Hoàn thành</span>
+                                    <span class="px-3 py-1 text-xs rounded-full bg-blue-100 text-blue-700">Hoàn thành</span>
                                     @else
-                                        <span class="px-3 py-1 text-xs rounded-full bg-slate-100 text-slate-700">Bản nháp</span>
+                                    <span class="px-3 py-1 text-xs rounded-full bg-slate-100 text-slate-700">Bản nháp</span>
                                     @endif
                                 </td>
-                                
                                 <td class="px-6 py-4 text-center">
                                     <button class="text-slate-400 hover:text-blue-600 mx-1 transition-colors" title="Chỉnh sửa"
                                         data-id="{{ $campaign->id }}"
@@ -201,11 +197,10 @@
                                         data-category="{{ $campaign->category }}"
                                         data-status="{{ $campaign->status }}"
                                         data-desc="{{ $campaign->description }}"
-                                        data-wallet="{{ $campaign->receiver_wallet }}" 
+                                        data-wallet="{{ $campaign->receiver_wallet }}"
                                         onclick="openEditTab(this)">
                                         <i class='bx bx-edit text-xl'></i>
                                     </button>
-                                    
                                     <a href="{{ route('admin.fund.delete', $campaign->id) }}" onclick="return confirm('Bạn có chắc chắn muốn xóa quỹ này không? Dữ liệu không thể khôi phục.')" class="inline-block text-slate-400 hover:text-rose-600 mx-1 transition-colors" title="Xóa">
                                         <i class='bx bx-trash text-xl'></i>
                                     </a>
@@ -257,79 +252,13 @@
                 </div>
             </div>
 
-            <div id="tao-quy" class="page-section hidden p-8 fade-in">
-                @if ($errors->any())
-                    <div class="max-w-5xl mx-auto mb-4 p-4 bg-rose-50 border border-rose-200 text-rose-600 rounded-lg">
-                        <ul class="list-disc pl-5 mb-0">
-                            @foreach ($errors->all() as $error)
-                                <li>{{ $error }}</li>
-                            @endforeach
-                        </ul>
-                    </div>
-                @endif
-
-                <form action="{{ route('admin.fund.store') }}" method="POST" enctype="multipart/form-data" class="max-w-5xl mx-auto flex flex-col lg:flex-row gap-8">
-                    @csrf 
-                    <div class="flex-1 space-y-6">
-                        <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100">
-                            <h2 class="text-lg font-bold text-slate-800 mb-4 border-b border-slate-100 pb-4">Thông tin chiến dịch</h2>
-                            <div class="space-y-4">
-                                <div>
-                                    <label class="block text-sm font-medium text-slate-700 mb-1">Tên quỹ <span class="text-rose-500">*</span></label>
-                                    <input type="text" name="title" placeholder="Nhập tên quỹ..." required class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-lg outline-none focus:border-indigo-500 text-sm">
-                                </div>
-                                
-                                <div>
-                                    <label class="block text-sm font-medium text-slate-700 mb-1">Ví người thụ hưởng (ETH) <span class="text-rose-500">*</span></label>
-                                    <input type="text" name="receiver_wallet" placeholder="0x..." required class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-lg outline-none focus:border-indigo-500 text-sm font-mono">
-                                    <p class="text-xs text-slate-500 mt-1">Hệ thống sẽ chuyển tiền giải ngân vào địa chỉ ví này.</p>
-                                </div>
-
-                                <div class="grid grid-cols-2 gap-4">
-                                    <div>
-                                        <label class="block text-sm font-medium text-slate-700 mb-1">Mục tiêu (ETH) <span class="text-rose-500">*</span></label>
-                                        <input type="number" name="goal_eth" step="0.01" min="0" placeholder="0.00" required class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-lg outline-none focus:border-indigo-500 text-sm">
-                                    </div>
-                                    <div>
-                                        <label class="block text-sm font-medium text-slate-700 mb-1">Danh mục</label>
-                                        <select name="category" class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-lg outline-none focus:border-indigo-500 text-sm">
-                                            <option value="Giáo dục">Giáo dục</option>
-                                            <option value="Y tế">Y tế</option>
-                                            <option value="Môi trường">Môi trường</option>
-                                        </select>
-                                    </div>
-                                </div>
-                                <div>
-                                    <label class="block text-sm font-medium text-slate-700 mb-1">Mô tả chi tiết</label>
-                                    <textarea name="description" rows="6" placeholder="Viết câu chuyện..." required class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-lg outline-none focus:border-indigo-500 text-sm"></textarea>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="w-full lg:w-80 flex flex-col gap-6">
-                        <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100">
-                            <h2 class="text-base font-bold text-slate-800 mb-4">Hình ảnh đại diện</h2>
-                            <label class="flex flex-col items-center justify-center w-full h-40 border-2 border-slate-300 border-dashed rounded-xl cursor-pointer hover:border-indigo-400 bg-slate-50 transition-colors">
-                                <i class='bx bx-cloud-upload text-3xl text-indigo-400 mb-2'></i>
-                                <span class="text-sm text-slate-500">Tải ảnh lên</span>
-                                <input type="file" name="image" class="hidden" accept="image/*" />
-                            </label>
-                        </div>
-                        <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100">
-                            <button type="submit" class="w-full px-4 py-3 bg-indigo-600 text-white text-sm font-semibold rounded-lg hover:bg-indigo-700 transition-all flex items-center justify-center gap-2 mb-3">
-                                <i class='bx bx-send'></i> Đăng Chiến Dịch
-                            </button>
-                        </div>
-                    </div>
-                </form>
-            </div>
+            @include('admin.create_fund')
 
             <div id="edit-quy" class="page-section hidden p-8 fade-in">
                 <form action="{{ route('admin.fund.update') }}" method="POST" enctype="multipart/form-data" class="max-w-5xl mx-auto flex flex-col lg:flex-row gap-8">
                     @csrf
                     <input type="hidden" name="id" id="edit-fund-id">
-                    
+
                     <div class="flex-1 space-y-6">
                         <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100">
                             <h2 class="text-lg font-bold text-slate-800 mb-4 border-b border-slate-100 pb-4">Cập nhật chiến dịch</h2>
@@ -401,30 +330,15 @@
     <script>
         // ================= XỬ LÝ NÚT SỬA =================
         function openEditTab(btn) {
-            // 1. Nhặt dữ liệu từ các thuộc tính data- của nút bấm
             document.getElementById('edit-fund-id').value = btn.getAttribute('data-id');
             document.getElementById('edit-fund-title').value = btn.getAttribute('data-title');
             document.getElementById('edit-fund-goal').value = btn.getAttribute('data-goal');
             document.getElementById('edit-fund-category').value = btn.getAttribute('data-category');
             document.getElementById('edit-fund-status').value = btn.getAttribute('data-status');
             document.getElementById('edit-fund-desc').value = btn.getAttribute('data-desc');
-            
-            // Lấy địa chỉ ví thụ hưởng đổ vào form sửa
-            document.getElementById('edit-fund-wallet').value = btn.getAttribute('data-wallet'); 
-            
-            // 2. Chuyển sang tab edit-quy
-            const navItems = document.querySelectorAll('.nav-item');
-            navItems.forEach(item => {
-                item.className = "nav-item flex items-center px-4 py-3 rounded-xl hover:bg-slate-800 hover:text-white transition-colors group";
-                const icon = item.querySelector('i');
-                if(icon) icon.className = icon.className.replace('text-white', 'group-hover:text-indigo-400').replace('bxs-', 'bx-');
-            });
+            document.getElementById('edit-fund-wallet').value = btn.getAttribute('data-wallet');
 
-            const pages = document.querySelectorAll('.page-section');
-            pages.forEach(page => page.classList.add('hidden'));
-
-            document.getElementById('edit-quy').classList.remove('hidden');
-
+            switchTab('edit-quy', null);
             document.getElementById('header-title').innerText = "Chỉnh sửa Quỹ Từ Thiện";
             document.getElementById('header-subtitle').innerText = "Cập nhật lại thông tin chiến dịch đã chọn";
         }
@@ -435,13 +349,13 @@
             navItems.forEach(item => {
                 item.className = "nav-item flex items-center px-4 py-3 rounded-xl hover:bg-slate-800 hover:text-white transition-colors group";
                 const icon = item.querySelector('i');
-                if(icon) icon.className = icon.className.replace('text-white', 'group-hover:text-indigo-400').replace('bxs-', 'bx-');
+                if (icon) icon.className = icon.className.replace('text-white', 'group-hover:text-indigo-400').replace('bxs-', 'bx-');
             });
 
-            if(element) {
+            if (element) {
                 element.className = "nav-item flex items-center px-4 py-3 bg-gradient-to-r from-indigo-500 to-purple-600 text-white rounded-xl shadow-lg shadow-indigo-500/30 transition-all hover:scale-[1.02]";
                 const activeIcon = element.querySelector('i');
-                if(activeIcon) activeIcon.className = activeIcon.className.replace('group-hover:text-indigo-400', 'text-white').replace('bx-', 'bxs-');
+                if (activeIcon) activeIcon.className = activeIcon.className.replace('group-hover:text-indigo-400', 'text-white').replace('bx-', 'bxs-');
             }
 
             const pages = document.querySelectorAll('.page-section');
@@ -450,23 +364,39 @@
             document.getElementById(tabId).classList.remove('hidden');
 
             const titles = {
-                'dashboard': { title: 'Tổng quan hệ thống', sub: 'Theo dõi tiến độ và các khoản quyên góp' },
-                'quan-ly': { title: 'Quản lý Quỹ Từ Thiện', sub: 'Quản lý, chỉnh sửa và theo dõi trạng thái' },
-                'lich-su': { title: 'Lịch sử Quyên Góp', sub: 'Danh sách các giao dịch mạng lưới ETH' },
-                'tao-quy': { title: 'Tạo Chiến Dịch Mới', sub: 'Khởi tạo một quỹ từ thiện mới lên hệ thống' },
-                'edit-quy': { title: 'Chỉnh sửa Quỹ Từ Thiện', sub: 'Cập nhật lại thông tin chiến dịch đã chọn' }
+                'dashboard': {
+                    title: 'Tổng quan hệ thống',
+                    sub: 'Theo dõi tiến độ và các khoản quyên góp'
+                },
+                'quan-ly': {
+                    title: 'Quản lý Quỹ Từ Thiện',
+                    sub: 'Quản lý, chỉnh sửa và theo dõi trạng thái'
+                },
+                'lich-su': {
+                    title: 'Lịch sử Quyên Góp',
+                    sub: 'Danh sách các giao dịch mạng lưới ETH'
+                },
+                'tao-quy': {
+                    title: 'Tạo Chiến Dịch Mới',
+                    sub: 'Khởi tạo một quỹ từ thiện mới lên hệ thống'
+                },
+                'edit-quy': {
+                    title: 'Chỉnh sửa Quỹ Từ Thiện',
+                    sub: 'Cập nhật lại thông tin chiến dịch đã chọn'
+                }
             };
-            
-            document.getElementById('header-title').innerText = titles[tabId].title;
-            document.getElementById('header-subtitle').innerText = titles[tabId].sub;
+
+            if (titles[tabId]) {
+                document.getElementById('header-title').innerText = titles[tabId].title;
+                document.getElementById('header-subtitle').innerText = titles[tabId].sub;
+            }
         }
 
-        // 2. Logic Đăng xuất
         function handleLogout() {
             const isConfirm = confirm("Bạn có chắc chắn muốn đăng xuất khỏi trang Quản trị?");
-            if(isConfirm) {
+            if (isConfirm) {
                 alert("Đăng xuất thành công! Chuyển hướng về trang chủ...");
-                window.location.href = "#login"; 
+                window.location.href = "#login";
             }
         }
 
@@ -474,7 +404,7 @@
         document.addEventListener('DOMContentLoaded', function() {
             const ctx = document.getElementById('fundChart').getContext('2d');
             const gradientBlue = ctx.createLinearGradient(0, 0, 0, 400);
-            gradientBlue.addColorStop(0, 'rgba(99, 102, 241, 0.9)'); 
+            gradientBlue.addColorStop(0, 'rgba(99, 102, 241, 0.9)');
             gradientBlue.addColorStop(1, 'rgba(99, 102, 241, 0.3)');
             const gradientGray = ctx.createLinearGradient(0, 0, 0, 400);
             gradientGray.addColorStop(0, 'rgba(203, 213, 225, 0.5)');
@@ -484,18 +414,45 @@
                 type: 'bar',
                 data: {
                     labels: ['Xây Trường', 'Y Tế', 'Khởi Nghiệp', 'Cứu Trợ', 'Môi Trường'],
-                    datasets: [
-                        { label: 'Đã quyên góp', data: [3.5, 5.2, 1.8, 8.0, 2.4], backgroundColor: gradientBlue, borderRadius: 6 },
-                        { label: 'Mục tiêu', data: [5.0, 10.0, 2.0, 8.0, 5.0], backgroundColor: gradientGray, borderRadius: 6 }
+                    datasets: [{
+                            label: 'Đã quyên góp',
+                            data: [3.5, 5.2, 1.8, 8.0, 2.4],
+                            backgroundColor: gradientBlue,
+                            borderRadius: 6
+                        },
+                        {
+                            label: 'Mục tiêu',
+                            data: [5.0, 10.0, 2.0, 8.0, 5.0],
+                            backgroundColor: gradientGray,
+                            borderRadius: 6
+                        }
                     ]
                 },
                 options: {
-                    responsive: true, maintainAspectRatio: false,
-                    plugins: { legend: { position: 'top' } },
-                    scales: { y: { beginAtZero: true, grid: { color: '#f1f5f9' } }, x: { grid: { display: false } } }
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'top'
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            grid: {
+                                color: '#f1f5f9'
+                            }
+                        },
+                        x: {
+                            grid: {
+                                display: false
+                            }
+                        }
+                    }
                 }
             });
         });
     </script>
 </body>
+
 </html>

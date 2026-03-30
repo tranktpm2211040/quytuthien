@@ -7,6 +7,7 @@
     <title>Chi tiết dự án - {{ $campaign->title }}</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.5/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600;700&display=swap" rel="stylesheet">
+    <link href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet">
     <style>
         :root {
             --gn-pink: #E11D48;
@@ -32,6 +33,10 @@
             padding: 12px 24px;
             transition: 0.3s;
             border: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
         }
 
         .btn-gn-pink:hover {
@@ -134,8 +139,6 @@
                         <span class="fw-bold">{{ number_format($campaign->goal_eth, 2) }} ETH</span>
                     </div>
 
-
-
                     <div class="row g-2">
                         <div class="col-12 col-md-5">
                             <div class="input-group h-100">
@@ -145,20 +148,14 @@
                         </div>
                         <div class="col-6 col-md-7">
                             <button onclick="donateNow()" id="btn-donate" class="btn btn-gn-pink w-100 h-100">
-                                Ủng hộ
+                                <i class='bx bxs-heart'></i> Ủng hộ
                             </button>
                         </div>
                     </div>
 
-
-
-
-                    <div class="progress mb-4">
+                    <div class="progress mb-4 mt-4">
                         <div class="progress-bar" style="width: 0%"></div>
                     </div>
-
-
-
                 </div>
             </div>
         </div>
@@ -199,81 +196,130 @@
 
     @include('footer')
 
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.5/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/ethers/6.7.0/ethers.umd.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
     <script>
         async function donateNow() {
             const amountInput = document.getElementById('donation-amount').value;
             const btnDonate = document.getElementById('btn-donate');
 
-            // 1. Lấy địa chỉ ví người nhận từ Database
-            // Cú pháp Blade của Laravel sẽ tự động in địa chỉ ví vào chuỗi này
             const receiverWallet = "{{ $campaign->receiver_wallet }}";
 
-            // Kiểm tra hợp lệ cơ bản
             if (!amountInput || amountInput < 10000) {
-                alert('Vui lòng nhập số tiền hợp lệ (Tối thiểu 10.000 VNĐ)');
+                Swal.fire('Lỗi', 'Vui lòng nhập số tiền hợp lệ (Tối thiểu 10.000 VNĐ)', 'warning');
                 return;
             }
 
             if (!receiverWallet) {
-                alert('Lỗi: Chiến dịch này chưa được Admin cài đặt ví người thụ hưởng!');
+                Swal.fire('Lỗi', 'Chiến dịch này chưa được Admin cài đặt ví người thụ hưởng!', 'error');
                 return;
             }
 
             if (typeof window.ethereum === 'undefined') {
-                alert('Bạn chưa cài đặt ví MetaMask trên trình duyệt!');
+                Swal.fire('Thông báo', 'Bạn chưa cài đặt ví MetaMask trên trình duyệt!', 'info');
                 return;
             }
 
             try {
-                // 2. Quy đổi VNĐ sang ETH (Giả lập tỉ giá 1 ETH = 80.000.000 VNĐ)
+                // Quy đổi VNĐ sang ETH 
                 const ethRate = 80000000;
                 const ethAmount = (amountInput / ethRate).toFixed(6);
 
-                // Xác nhận với người dùng
-                const isConfirm = confirm(`Bạn sắp quyên góp ${Number(amountInput).toLocaleString('vi-VN')} VNĐ.\nTương đương khoảng ~${ethAmount} ETH.\n\nTiền sẽ được chuyển TRỰC TIẾP đến ví người thụ hưởng: ${receiverWallet.substring(0,6)}...${receiverWallet.substring(38)}\n\nTiếp tục?`);
+                // ==============================================================
+                // HIỂN THỊ HỘP THOẠI XÁC NHẬN SIÊU ĐẸP (SWEETALERT2)
+                // ==============================================================
+                const confirmResult = await Swal.fire({
+                    title: 'Xác nhận quyên góp',
+                    html: `
+                    <div class="text-start mt-3">
+                        <p>Số tiền quyên góp: <b class="text-danger fs-5">${Number(amountInput).toLocaleString('vi-VN')} VNĐ</b></p>
+                        <p>Tương đương khoảng: <b>~${ethAmount} ETH</b></p>
+                        <p class="mb-1 text-secondary">Tiền sẽ được chuyển TRỰC TIẾP đến ví:</p>
+                        <code class="bg-light p-2 rounded border d-block text-center text-dark fs-6">
+                            ${receiverWallet.substring(0,6)}...${receiverWallet.substring(38)}
+                        </code>
+                    </div>
+                `,
+                    icon: 'question',
+                    showCancelButton: true,
+                    confirmButtonColor: '#E11D48', // Màu hồng giống nút trên web
+                    cancelButtonColor: '#6c757d',
+                    confirmButtonText: '<i class="bx bxs-heart"></i> Tiếp tục',
+                    cancelButtonText: 'Hủy bỏ'
+                });
 
-                if (!isConfirm) return;
+                // Nếu người dùng bấm Hủy bỏ thì dừng lại
+                if (!confirmResult.isConfirmed) return;
 
-                // 3. Kết nối MetaMask
+                // ... Tiếp tục xử lý giao dịch ...
                 const provider = new ethers.BrowserProvider(window.ethereum);
                 const signer = await provider.getSigner();
 
-                // Đổi trạng thái nút bấm
+                const contractAddress = "{{ env('SMART_CONTRACT_ADDRESS') }}";
+
+                // Xóa thoiGianKetThuc ở hàm taoChienDich, nhưng ở hàm quyenGop vẫn chỉ có _idChienDich
+                const contractABI = [{
+                    "inputs": [{
+                        "internalType": "uint256",
+                        "name": "_idChienDich",
+                        "type": "uint256"
+                    }],
+                    "name": "quyenGop",
+                    "outputs": [],
+                    "stateMutability": "payable",
+                    "type": "function"
+                }];
+
+                const contract = new ethers.Contract(contractAddress, contractABI, signer);
+
                 const originalText = btnDonate.innerHTML;
                 btnDonate.innerHTML = "<i class='bx bx-loader-alt bx-spin'></i> Đang chờ xác nhận...";
                 btnDonate.disabled = true;
 
-                // 4. Giao dịch trực tiếp (P2P Transfer)
-                // Lệnh này chuyển tiền thẳng từ ví người quyên góp sang ví người thụ hưởng
-                const tx = await signer.sendTransaction({
-                    to: receiverWallet,
-                    value: ethers.parseEther(ethAmount.toString())
+                const campaignId = "{{ $campaign->id }}";
+                const weiAmount = ethers.parseEther(ethAmount.toString());
+
+                // Gọi hàm quyenGop
+                const tx = await contract.quyenGop(campaignId, {
+                    value: weiAmount
                 });
 
-                btnDonate.innerHTML = "<i class='bx bx-loader-alt bx-spin'></i> Đang xử lý trên Blockchain...";
+                btnDonate.innerHTML = "<i class='bx bx-loader-alt bx-spin'></i> Đang xử lý Blockchain...";
 
-                // Chờ Blockchain xác nhận giao dịch
                 const receipt = await tx.wait();
                 const txHash = receipt.hash;
 
-                // Thành công
-                alert(`🎉 Quyên góp thành công!\nTiền đã được gửi thẳng vào ví người thụ hưởng.\nMã giao dịch (Hash): ${txHash}`);
-
-                // Load lại trang
-                window.location.reload();
+                // HIỂN THỊ THÔNG BÁO THÀNH CÔNG BẰNG SWEETALERT2
+                Swal.fire({
+                    title: 'Thành công!',
+                    html: `
+                    🎉 Quyên góp vào Smart Contract thành công!<br><br>
+                    <span class="text-secondary">Mã giao dịch (Hash):</span><br>
+                    <code class="text-primary" style="word-break: break-all;">${txHash}</code>
+                `,
+                    icon: 'success',
+                    confirmButtonColor: '#E11D48'
+                }).then(() => {
+                    window.location.reload();
+                });
 
             } catch (error) {
                 console.error(error);
-                btnDonate.innerHTML = "Ủng hộ";
+                btnDonate.innerHTML = "<i class='bx bxs-heart'></i> Ủng hộ";
                 btnDonate.disabled = false;
 
-                // Bắt lỗi nếu người dùng nhấn "Từ chối" trên MetaMask
                 if (error.code === 'ACTION_REJECTED' || error.code === 4001) {
-                    alert("Bạn đã hủy giao dịch trên MetaMask.");
+                    Swal.fire('Đã hủy', 'Bạn đã hủy giao dịch trên ví MetaMask.', 'info');
                 } else {
-                    alert("Giao dịch thất bại! Vui lòng kiểm tra lại số dư ví ETH/Testnet của bạn.");
+                    const errorMessage = error.reason || error.message || "Lỗi không xác định";
+                    Swal.fire({
+                        title: 'Giao dịch thất bại!',
+                        text: errorMessage,
+                        icon: 'error',
+                        confirmButtonColor: '#E11D48'
+                    });
                 }
             }
         }
