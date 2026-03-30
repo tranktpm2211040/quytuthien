@@ -139,6 +139,17 @@
                         <span class="fw-bold">{{ number_format($campaign->goal_eth, 2) }} ETH</span>
                     </div>
 
+                    <div class="progress mb-2" style="height: 10px; border-radius: 10px; background-color: #ffe4e6;">
+                        <div id="progress-bar" class="progress-bar" style="width: 0%; background-color: #E11D48; border-radius: 10px; transition: width 1s ease-in-out;"></div>
+                    </div>
+
+                    <div class="d-flex justify-content-between mb-4">
+                        <span class="text-secondary">Đã đạt được</span>
+                        <span class="fw-bold fs-5" style="color: #E11D48;" id="total-raised">
+                            <i class='bx bx-loader-alt bx-spin text-sm'></i> Đang tính...
+                        </span>
+                    </div>
+
                     <div class="row g-2">
                         <div class="col-12 col-md-5">
                             <div class="input-group h-100">
@@ -321,6 +332,158 @@
                         confirmButtonColor: '#E11D48'
                     });
                 }
+            }
+        }
+        // ==============================================================
+        // HÀM: LẤY DỮ LIỆU TỪ SMART CONTRACT (TỔNG TIỀN) & EXPLORER (DANH SÁCH)
+        // ==============================================================
+        async function loadDonors() {
+            const donorsContainer = document.getElementById('donor-list');
+            const totalRaisedEl = document.getElementById('total-raised');
+            const progressBarEl = document.getElementById('progress-bar');
+
+            // Lấy mục tiêu ETH từ Database
+            const goalEth = parseFloat("{{ $campaign->goal_eth }}");
+
+            try {
+                const contractAddress = "{{ env('SMART_CONTRACT_ADDRESS') }}";
+                const campaignId = parseInt("{{ $campaign->id }}");
+                const rpcUrl = "https://coston2-api.flare.network/ext/C/rpc";
+                const provider = new ethers.JsonRpcProvider(rpcUrl);
+
+                // ----------------------------------------------------------
+                // 1. LẤY TỔNG TIỀN TRỰC TIẾP TỪ SMART CONTRACT (CHÍNH XÁC NHẤT)
+                // ----------------------------------------------------------
+                const contractABI = [{
+                    "inputs": [{
+                        "internalType": "uint256",
+                        "name": "",
+                        "type": "uint256"
+                    }],
+                    "name": "danhSachChienDich",
+                    "outputs": [{
+                            "internalType": "uint256",
+                            "name": "idTrenDatabase",
+                            "type": "uint256"
+                        },
+                        {
+                            "internalType": "address payable",
+                            "name": "nguoiNhanTien",
+                            "type": "address"
+                        },
+                        {
+                            "internalType": "uint256",
+                            "name": "mucTieuTien",
+                            "type": "uint256"
+                        },
+                        {
+                            "internalType": "uint256",
+                            "name": "tongTienDangGiu",
+                            "type": "uint256"
+                        },
+                        {
+                            "internalType": "uint256",
+                            "name": "soTienDaRut",
+                            "type": "uint256"
+                        },
+                        {
+                            "internalType": "bool",
+                            "name": "trangThaiDong",
+                            "type": "bool"
+                        }
+                    ],
+                    "stateMutability": "view",
+                    "type": "function"
+                }];
+
+                const contract = new ethers.Contract(contractAddress, contractABI, provider);
+                const blockchainData = await contract.danhSachChienDich(campaignId);
+
+                // Tính tổng quyên góp = Tiền đang giữ + Tiền đã giải ngân
+                const tongTienDangGiu = blockchainData[3];
+                const soTienDaRut = blockchainData[4];
+                const totalRaisedEth = parseFloat(ethers.formatEther(tongTienDangGiu + soTienDaRut));
+
+                // HIỂN THỊ SỐ TIỀN (KHÔNG HIỆN %)
+                totalRaisedEl.innerText = totalRaisedEth.toFixed(4) + " ETH";
+
+                // Cập nhật thanh màu hồng (Tính toán ngầm để kéo dài thanh bar)
+                let percent = (totalRaisedEth / goalEth) * 100;
+                if (percent > 100) percent = 100;
+                progressBarEl.style.width = percent + "%";
+
+
+                // ----------------------------------------------------------
+                // 2. LẤY DANH SÁCH NGƯỜI ỦNG HỘ TỪ EXPLORER API
+                // ----------------------------------------------------------
+                const apiUrl = `https://coston2-explorer.flare.network/api?module=logs&action=getLogs&address=${contractAddress}`;
+                const response = await fetch(apiUrl);
+                const data = await response.json();
+
+                if (data.status !== "1" || !data.result || data.result.length === 0) {
+                    donorsContainer.innerHTML = `
+                        <div class="text-center py-5">
+                            <img src="https://cdn-icons-png.flaticon.com/512/102/102661.png" width="50" class="opacity-25 mb-3">
+                            <p class="text-secondary fw-bold">Hãy là người đầu tiên ủng hộ dự án này!</p>
+                        </div>`;
+                    return;
+                }
+
+                const abiCoder = ethers.AbiCoder.defaultAbiCoder();
+                const eventTopic = "0x8ceef0f3fa6aae899e4f7a25ee836a441dd6a9b9f6da648085ef15e927034ede";
+
+                let campaignLogs = [];
+                for (const log of data.result) {
+                    if (log.topics[0] === eventTopic) {
+                        try {
+                            const decoded = abiCoder.decode(['uint256', 'address', 'uint256'], log.data);
+                            if (Number(decoded[0]) === campaignId) {
+                                campaignLogs.push({
+                                    donorAddress: decoded[1],
+                                    amountEth: parseFloat(ethers.formatEther(decoded[2])).toFixed(4),
+                                    txHash: log.transactionHash
+                                });
+                            }
+                        } catch (e) {}
+                    }
+                }
+
+                campaignLogs.reverse();
+
+                if (campaignLogs.length === 0) {
+                    donorsContainer.innerHTML = `
+                        <div class="text-center py-5">
+                            <img src="https://cdn-icons-png.flaticon.com/512/102/102661.png" width="50" class="opacity-25 mb-3">
+                            <p class="text-secondary fw-bold">Hãy là người đầu tiên ủng hộ dự án này!</p>
+                        </div>`;
+                    return;
+                }
+
+                let html = '';
+                for (const log of campaignLogs) {
+                    const shortAddress = log.donorAddress.substring(0, 6) + '...' + log.donorAddress.substring(38);
+                    html += `
+                        <div class="d-flex align-items-center p-3 bg-white border rounded-3 shadow-sm mb-2 transition-all hover-shadow">
+                            <div class="bg-light rounded-circle d-flex align-items-center justify-content-center me-3 border" style="width: 48px; height: 48px;">
+                                <i class='bx bx-wallet text-gn-pink fs-4'></i>
+                            </div>
+                            <div class="flex-grow-1">
+                                <h6 class="mb-1 fw-bold text-dark font-monospace" style="font-size: 0.9rem;">${shortAddress}</h6>
+                                <a href="https://coston2-explorer.flare.network/tx/${log.txHash}" target="_blank" class="text-decoration-none text-secondary small d-flex align-items-center gap-1">
+                                    <i class='bx bx-link-external'></i> ${log.txHash.substring(0, 10)}...
+                                </a>
+                            </div>
+                            <div class="text-end">
+                                <span class="fw-bold fs-6" style="color: #10B981;">+${log.amountEth} ETH</span>
+                            </div>
+                        </div>`;
+                }
+                donorsContainer.innerHTML = html;
+
+            } catch (error) {
+                console.error("Lỗi Blockchain:", error);
+                totalRaisedEl.innerText = "0 ETH";
+                donorsContainer.innerHTML = `<p class="text-center py-5 text-danger small">Không thể tải dữ liệu từ Blockchain.</p>`;
             }
         }
     </script>

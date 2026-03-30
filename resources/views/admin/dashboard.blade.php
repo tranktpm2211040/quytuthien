@@ -15,17 +15,48 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
     <style>
-        body { font-family: 'Inter', sans-serif; }
-        .fade-in { animation: fadeIn 0.4s ease-out forwards; opacity: 0; }
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
+        body {
+            font-family: 'Inter', sans-serif;
         }
-        .delay-100 { animation-delay: 100ms; }
-        ::-webkit-scrollbar { width: 6px; height: 6px; }
-        ::-webkit-scrollbar-track { background: #f1f5f9; }
-        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
-        ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+
+        .fade-in {
+            animation: fadeIn 0.4s ease-out forwards;
+            opacity: 0;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .delay-100 {
+            animation-delay: 100ms;
+        }
+
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #f1f5f9;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 10px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8;
+        }
     </style>
 </head>
 
@@ -159,6 +190,7 @@
                                 <th class="px-6 py-4 text-indigo-600">Mục tiêu (ETH)</th>
                                 <th class="px-6 py-4">Ví người nhận</th>
                                 <th class="px-6 py-4">Mô tả</th>
+                                <th class="px-6 py-4">Ngày kết thúc</th>
                                 <th class="px-6 py-4">Trạng thái</th>
                                 <th class="px-6 py-4 text-center">Hành động</th>
                             </tr>
@@ -180,6 +212,7 @@
                                         {{ \Illuminate\Support\Str::limit($campaign->description, 30) }}
                                     </div>
                                 </td>
+                                <td class="px-6 py-4 text-sm text-slate-500">{{ \Carbon\Carbon::parse($campaign->end_date)->format('d/m/Y') }}</td>
                                 <td class="px-6 py-4">
                                     @if($campaign->status == 1)
                                     <span class="px-3 py-1 text-xs rounded-full bg-emerald-100 text-emerald-700">Đang hoạt động</span>
@@ -190,6 +223,9 @@
                                     @endif
                                 </td>
                                 <td class="px-6 py-4 text-center">
+                                    <a href="{{ route('admin.fund.detail', $campaign->id) }}" class="inline-block text-slate-400 hover:text-emerald-600 mx-1 transition-colors" title="Xem chi tiết">
+                                        <i class='bx bx-show text-xl'></i>
+                                    </a>
                                     <button class="text-slate-400 hover:text-blue-600 mx-1 transition-colors" title="Chỉnh sửa"
                                         data-id="{{ $campaign->id }}"
                                         data-title="{{ $campaign->title }}"

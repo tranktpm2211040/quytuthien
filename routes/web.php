@@ -70,4 +70,6 @@ Route::prefix('admin')->name('admin.')->group(function () {
     // Xóa dự án (Đường dẫn: /admin/fund/delete/{id})
     Route::get('/fund/delete/{id}', [FundController::class, 'delete'])->name('fund.delete');
 
+    // Xem chi tiết dự án bên Admin (Đường dẫn: /admin/fund/detail/{id})
+    Route::get('/fund/detail/{id}', [FundController::class, 'showDetail'])->name('fund.detail');
 });

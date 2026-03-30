@@ -44,6 +44,7 @@ class FundController extends Controller
             'goal_eth' => 'required|numeric|min:0.01',
             'receiver_wallet' => 'required|string|max:42', // Bắt buộc nhập địa chỉ ví
             'category' => 'required|string',
+            'end_date' => 'required|date',
             'description' => 'required|string',
             'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048' 
         ], [
@@ -51,6 +52,7 @@ class FundController extends Controller
             'goal_eth.required' => 'Vui lòng nhập mục tiêu ETH',
             'receiver_wallet.required' => 'Vui lòng nhập địa chỉ ví người thụ hưởng',
             'category.required' => 'Vui lòng chọn danh mục',
+            'end_date.required' => 'Vui lòng chọn ngày kết thúc',
             'description.required' => 'Vui lòng nhập mô tả chi tiết'
         ]);
 
@@ -73,7 +75,7 @@ class FundController extends Controller
             'description' => $request->description,
             'image_url' => $imagePath,       
             'start_date' => now(),           
-            'end_date' => now()->addMonths(3),
+            'end_date' => $request->end_date,
             'status' => 1                    
         ]);
 
@@ -132,5 +134,13 @@ class FundController extends Controller
         }
 
         return redirect()->back()->with('error', 'Không tìm thấy chiến dịch!');
+    }
+
+    // Trang chi tiết dự án (dành cho Admin)
+    public function showDetail($id) {
+        $campaign = Campaign::findOrFail($id);
+        
+        // Trả về file detail_fund.blade.php nằm trong thư mục resources/views/admin/
+        return view('admin.detail_fund', compact('campaign'));
     }
 }
