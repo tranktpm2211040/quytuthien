@@ -241,24 +241,24 @@
                     <div class="col">
                         <a href="{{ route('fund.detail', $campaign->id) }}" class="text-decoration-none">
                             <div class="card card-custom h-100 d-flex flex-column border-0 shadow-sm">
-                                
+
                                 <div class="aspect-4-3">
                                     <img src="{{ $campaign->image_url ? asset($campaign->image_url) : asset('img/admin/quy-1.jpg') }}" alt="{{ $campaign->title }}">
-                                    
+
                                     @if($campaign->category)
-                                        <span class="tag-badge">{{ $campaign->category }}</span>
+                                    <span class="tag-badge">{{ $campaign->category }}</span>
                                     @endif
                                 </div>
-                                
+
                                 <div class="card-body d-flex flex-column p-4">
                                     <h5 class="card-title fw-bold mb-3 text-dark text-center" style="font-size: 1.2rem; line-height: 1.5;">
                                         {{ $campaign->title }}
                                     </h5>
-                                    
+
                                     <p class="text-secondary text-sm mb-4 line-clamp-2 text-center" style="font-size: 0.9rem;" title="{{ $campaign->description }}">
                                         {{ $campaign->description }}
                                     </p>
-                                    
+
                                     <div class="mt-auto">
                                         <div class="d-flex justify-content-between align-items-center mb-3 pb-3 border-bottom border-light">
                                             <span class="text-secondary" style="font-size: 0.9rem;">Mục tiêu:</span>
@@ -267,12 +267,12 @@
                                         <div class="btn btn-gn w-100 py-2">Ủng hộ ngay</div>
                                     </div>
                                 </div>
-                                
+
                             </div>
                         </a>
                     </div>
                     @endforeach
-                    </div>
+                </div>
 
                 @if($campaigns->isEmpty())
                 <div class="col-12 text-center py-5 text-secondary w-100">
@@ -287,45 +287,6 @@
     @include('footer')
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.5/dist/js/bootstrap.bundle.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/ethers/6.7.0/ethers.umd.min.js"></script>
-
-<script>
-    document.addEventListener("DOMContentLoaded", function() {
-        const connectWalletBtn = document.getElementById('connectWalletBtn');
-        const walletAddressText = document.getElementById('walletAddressText');
-
-        if(connectWalletBtn) {
-            connectWalletBtn.addEventListener('click', async () => {
-                // Kiểm tra xem trình duyệt có ví Web3 chưa
-                if (typeof window.ethereum !== 'undefined') {
-                    try {
-                        walletAddressText.innerText = "Đang kết nối...";
-                        
-                        // Yêu cầu kết nối
-                        const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
-                        const address = accounts[0];
-                        
-                        // Rút gọn địa chỉ ví (vd: 0x123...abcd)
-                        const shortAddress = address.slice(0, 5) + "..." + address.slice(-4);
-                        
-                        // Hiển thị lên nút
-                        walletAddressText.innerText = shortAddress;
-                        
-                        // Tùy chọn: Đổi màu nút khi kết nối thành công
-                        connectWalletBtn.classList.remove('btn-outline-dark');
-                        connectWalletBtn.classList.add('btn-success', 'text-white', 'border-0');
-
-                    } catch (error) {
-                        console.error("Lỗi:", error);
-                        walletAddressText.innerText = "Kết nối ví";
-                    }
-                } else {
-                    alert("Vui lòng cài đặt tiện ích ví MetaMask (hoặc ví tương tự) trên trình duyệt của bạn!");
-                }
-            });
-        }
-    });
-</script>
 
 </body>
 

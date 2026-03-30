@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Models\Campaign; // Đã đổi từ Fund sang Campaign
+use App\Models\Campaign; 
 
 class FundController extends Controller
 {
@@ -19,11 +19,10 @@ class FundController extends Controller
         // Lấy danh sách quỹ mới nhất xếp lên đầu
         $campaigns = Campaign::orderBy('created_at', 'desc')->get();
 
-        // dữ liệu cho biểu đồ (Đã cập nhật tên cột mới)
+        // dữ liệu cho biểu đồ 
         $labels = $campaigns->pluck('title'); 
         $data = $campaigns->pluck('goal_eth'); 
 
-        // Truyền biến sang view (nhớ kiểm tra lại tên view của bạn là admin.dashboard hay admin.manage_funds nhé)
         return view('admin.dashboard', compact('campaigns', 'labels', 'data'));
     }
 
@@ -36,19 +35,21 @@ class FundController extends Controller
         return view('detail', compact('campaign'));
     }
 
-    // Thêm quỹ mới (Xử lý form ở Ảnh 1)
+    // Thêm quỹ mới 
     public function store(Request $request) {
 
-        // 1. Validate dữ liệu nhập vào
+        // 1. Validate dữ liệu nhập vào (ĐÃ THÊM receiver_wallet)
         $request->validate([
             'title' => 'required|string|max:255',
             'goal_eth' => 'required|numeric|min:0.01',
+            'receiver_wallet' => 'required|string|max:42', // Bắt buộc nhập địa chỉ ví
             'category' => 'required|string',
             'description' => 'required|string',
-            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048' // Kiểm tra file ảnh
+            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048' 
         ], [
             'title.required' => 'Vui lòng nhập tên quỹ',
             'goal_eth.required' => 'Vui lòng nhập mục tiêu ETH',
+            'receiver_wallet.required' => 'Vui lòng nhập địa chỉ ví người thụ hưởng',
             'category.required' => 'Vui lòng chọn danh mục',
             'description.required' => 'Vui lòng nhập mô tả chi tiết'
         ]);
@@ -63,16 +64,17 @@ class FundController extends Controller
             $imagePath = 'uploads/campaigns/' . $fileName;
         }
 
-        // 3. Lưu vào Database
+        // 3. Lưu vào Database (ĐÃ THÊM receiver_wallet)
         Campaign::create([
             'title' => $request->title,
             'goal_eth' => $request->goal_eth,
+            'receiver_wallet' => $request->receiver_wallet, // Lấy dữ liệu ví từ form
             'category' => $request->category,
             'description' => $request->description,
-            'image_url' => $imagePath,       // Đường dẫn ảnh vừa upload
-            'start_date' => now(),           // Mặc định ngày bắt đầu là lúc tạo
-            'end_date' => now()->addMonths(3),// Mặc định chạy trong 3 tháng
-            'status' => 1                    // 1: Đang hoạt động
+            'image_url' => $imagePath,       
+            'start_date' => now(),           
+            'end_date' => now()->addMonths(3),
+            'status' => 1                    
         ]);
 
         // 4. Quay lại trang trước và báo thành công
@@ -81,23 +83,18 @@ class FundController extends Controller
 
     // Xử lý Xóa chiến dịch
     public function delete($id) {
-        // Tìm chiến dịch trong Database dựa vào ID
         $campaign = Campaign::find($id);
         
         if ($campaign) {
-            // BƯỚC THÊM: Nếu quỹ này có ảnh bìa, ta xóa luôn file ảnh trong thư mục cho nhẹ ổ cứng
+            // Nếu quỹ này có ảnh bìa, xóa file ảnh trong thư mục cho nhẹ ổ cứng
             if ($campaign->image_url && file_exists(public_path($campaign->image_url))) {
                 unlink(public_path($campaign->image_url));
             }
             
-            // Xóa dòng dữ liệu trong Database
             $campaign->delete();
-            
-            // Quay lại trang quản lý và báo thành công
             return redirect()->back()->with('success', 'Đã xóa chiến dịch thành công!');
         }
 
-        // Nếu không tìm thấy (ví dụ ai đó gõ bậy ID trên thanh địa chỉ)
         return redirect()->back()->with('error', 'Không tìm thấy chiến dịch này!');
     }
 
@@ -107,9 +104,10 @@ class FundController extends Controller
         $campaign = Campaign::find($request->id);
         
         if ($campaign) {
-            // Cập nhật các trường dữ liệu
+            // Cập nhật các trường dữ liệu (ĐÃ THÊM receiver_wallet)
             $campaign->title = $request->title;
             $campaign->goal_eth = $request->goal_eth;
+            $campaign->receiver_wallet = $request->receiver_wallet; // Nhận ví mới khi sửa
             $campaign->category = $request->category;
             $campaign->status = $request->status;
             $campaign->description = $request->description;

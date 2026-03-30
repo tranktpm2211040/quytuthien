@@ -16,7 +16,7 @@
             <div class="d-flex align-items-center gap-3">
                 <button class="btn btn-gn px-4 py-2">Ủng hộ ngay</button>
 
-                <button id="connectWalletBtn" class="btn btn-outline-dark px-4 py-2 d-flex align-items-center gap-2" style="border-radius: 0.5rem;">
+                <button id="connectWalletBtn" class="btn btn-outline-dark px-4 py-2 d-flex align-items-center gap-2" style="border-radius: 0.5rem; transition: all 0.3s;">
                     <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" />
                     </svg>
@@ -71,3 +71,78 @@
         </nav>
     </div>
 </header>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/ethers/6.7.0/ethers.umd.min.js"></script>
+
+<script>
+    document.addEventListener('DOMContentLoaded', async () => {
+        const connectBtn = document.getElementById('connectWalletBtn');
+        const walletText = document.getElementById('walletAddressText');
+
+        if (!connectBtn || !walletText) return;
+
+        // Hàm cập nhật giao diện
+        const updateWalletUI = (address) => {
+            const shortAddress = address.slice(0, 6) + "..." + address.slice(-4);
+            walletText.innerText = shortAddress;
+            // Hiện Title (hover chuột vào sẽ thấy toàn bộ địa chỉ ví dài)
+            connectBtn.title = "Ví đang kết nối: " + address; 
+            
+            connectBtn.classList.remove('btn-outline-dark');
+            connectBtn.classList.add('btn-success', 'text-white');
+            connectBtn.style.borderColor = "#28a745";
+        };
+
+        const resetWalletUI = () => {
+            walletText.innerText = "Kết nối ví";
+            connectBtn.title = "Nhấn để kết nối MetaMask";
+            connectBtn.classList.add('btn-outline-dark');
+            connectBtn.classList.remove('btn-success', 'text-white');
+            connectBtn.style.borderColor = "";
+        };
+
+        // 1. Tự động kiểm tra ví khi load trang
+        if (typeof window.ethereum !== 'undefined') {
+            try {
+                const provider = new ethers.BrowserProvider(window.ethereum);
+                const accounts = await provider.send("eth_accounts", []); 
+                if (accounts.length > 0) {
+                    updateWalletUI(accounts[0]);
+                }
+            } catch (error) {
+                console.log("Chưa có ví nào được kết nối sẵn.");
+            }
+
+            // ==========================================
+            // TÍNH NĂNG MỚI: LẮNG NGHE SỰ KIỆN ĐỔI VÍ
+            // ==========================================
+            window.ethereum.on('accountsChanged', function (accounts) {
+                if (accounts.length > 0) {
+                    updateWalletUI(accounts[0]);
+                    console.log("Đã chuyển sang ví: ", accounts[0]);
+                } else {
+                    // Nếu người dùng ngắt kết nối ví hoàn toàn khỏi web
+                    resetWalletUI();
+                }
+            });
+
+        }
+
+        // 2. Xử lý khi bấm nút kết nối
+        connectBtn.addEventListener('click', async () => {
+            if (typeof window.ethereum !== 'undefined') {
+                try {
+                    const provider = new ethers.BrowserProvider(window.ethereum);
+                    const accounts = await provider.send("eth_requestAccounts", []);
+                    if (accounts.length > 0) {
+                        updateWalletUI(accounts[0]);
+                    }
+                } catch (error) {
+                    console.error("Lỗi:", error);
+                }
+            } else {
+                alert("Bạn chưa cài đặt MetaMask!");
+            }
+        });
+    });
+</script>

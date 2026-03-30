@@ -154,10 +154,8 @@
                             <tr>
                                 <th class="px-6 py-4">Tên Quỹ</th>
                                 <th class="px-6 py-4 text-indigo-600">Mục tiêu (ETH)</th>
-                                <th class="px-6 py-4">Mô tả chi tiết</th>
-                                <th class="px-6 py-4">Link Ảnh</th>
-                                <th class="px-6 py-4">Ngày bắt đầu</th>
-                                <th class="px-6 py-4">Ngày kết thúc</th>
+                                <th class="px-6 py-4">Ví người nhận</th> 
+                                <th class="px-6 py-4">Mô tả</th>
                                 <th class="px-6 py-4">Trạng thái</th>
                                 <th class="px-6 py-4 text-center">Hành động</th>
                             </tr>
@@ -170,29 +168,19 @@
                                 <td class="px-6 py-4 font-bold text-indigo-600">
                                     {{ number_format($campaign->goal_eth, 2) }} ETH
                                 </td>
-                                
-                                <td class="px-6 py-4">
-                                    <div class="max-w-[250px] truncate text-sm text-slate-500" title="{{ $campaign->description }}">
-                                        {{ \Illuminate\Support\Str::limit($campaign->description, 50) }}
-                                    </div>
-                                </td>
-                                
-                                <td class="px-6 py-4">
-                                    @if($campaign->image_url)
-                                        <a href="{{ asset($campaign->image_url) }}" target="_blank" class="inline-flex items-center text-indigo-500 hover:text-indigo-700 text-sm transition-colors">
-                                            <i class='bx bx-image-alt mr-1 text-lg'></i> Xem ảnh
-                                        </a>
+
+                                <td class="px-6 py-4 font-mono text-xs text-slate-500" title="{{ $campaign->receiver_wallet }}">
+                                    @if($campaign->receiver_wallet)
+                                        {{ substr($campaign->receiver_wallet, 0, 6) }}...{{ substr($campaign->receiver_wallet, -4) }}
                                     @else
-                                        <span class="text-slate-400 text-sm italic">Không có ảnh</span>
+                                        <span class="text-rose-400 italic">Chưa có</span>
                                     @endif
                                 </td>
                                 
-                                <td class="px-6 py-4 text-sm text-slate-600">
-                                    {{ $campaign->start_date ? \Carbon\Carbon::parse($campaign->start_date)->format('d/m/Y') : '---' }}
-                                </td>
-                                
-                                <td class="px-6 py-4 text-sm text-slate-600">
-                                    {{ $campaign->end_date ? \Carbon\Carbon::parse($campaign->end_date)->format('d/m/Y') : '---' }}
+                                <td class="px-6 py-4">
+                                    <div class="max-w-[200px] truncate text-sm text-slate-500" title="{{ $campaign->description }}">
+                                        {{ \Illuminate\Support\Str::limit($campaign->description, 30) }}
+                                    </div>
                                 </td>
                                 
                                 <td class="px-6 py-4">
@@ -213,6 +201,7 @@
                                         data-category="{{ $campaign->category }}"
                                         data-status="{{ $campaign->status }}"
                                         data-desc="{{ $campaign->description }}"
+                                        data-wallet="{{ $campaign->receiver_wallet }}" 
                                         onclick="openEditTab(this)">
                                         <i class='bx bx-edit text-xl'></i>
                                     </button>
@@ -226,7 +215,7 @@
 
                             @if($campaigns->isEmpty())
                             <tr>
-                                <td colspan="8" class="px-6 py-8 text-center text-slate-500">
+                                <td colspan="6" class="px-6 py-8 text-center text-slate-500">
                                     Chưa có chiến dịch nào trên hệ thống. Hãy tạo chiến dịch đầu tiên!
                                 </td>
                             </tr>
@@ -280,7 +269,8 @@
                 @endif
 
                 <form action="{{ route('admin.fund.store') }}" method="POST" enctype="multipart/form-data" class="max-w-5xl mx-auto flex flex-col lg:flex-row gap-8">
-                    @csrf <div class="flex-1 space-y-6">
+                    @csrf 
+                    <div class="flex-1 space-y-6">
                         <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100">
                             <h2 class="text-lg font-bold text-slate-800 mb-4 border-b border-slate-100 pb-4">Thông tin chiến dịch</h2>
                             <div class="space-y-4">
@@ -288,6 +278,13 @@
                                     <label class="block text-sm font-medium text-slate-700 mb-1">Tên quỹ <span class="text-rose-500">*</span></label>
                                     <input type="text" name="title" placeholder="Nhập tên quỹ..." required class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-lg outline-none focus:border-indigo-500 text-sm">
                                 </div>
+                                
+                                <div>
+                                    <label class="block text-sm font-medium text-slate-700 mb-1">Ví người thụ hưởng (ETH) <span class="text-rose-500">*</span></label>
+                                    <input type="text" name="receiver_wallet" placeholder="0x..." required class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-lg outline-none focus:border-indigo-500 text-sm font-mono">
+                                    <p class="text-xs text-slate-500 mt-1">Hệ thống sẽ chuyển tiền giải ngân vào địa chỉ ví này.</p>
+                                </div>
+
                                 <div class="grid grid-cols-2 gap-4">
                                     <div>
                                         <label class="block text-sm font-medium text-slate-700 mb-1">Mục tiêu (ETH) <span class="text-rose-500">*</span></label>
@@ -341,6 +338,12 @@
                                     <label class="block text-sm font-medium text-slate-700 mb-1">Tên quỹ <span class="text-rose-500">*</span></label>
                                     <input type="text" name="title" id="edit-fund-title" required class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-lg outline-none focus:border-indigo-500 text-sm">
                                 </div>
+
+                                <div>
+                                    <label class="block text-sm font-medium text-slate-700 mb-1">Ví người thụ hưởng (ETH) <span class="text-rose-500">*</span></label>
+                                    <input type="text" name="receiver_wallet" id="edit-fund-wallet" required class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-lg outline-none focus:border-indigo-500 text-sm font-mono">
+                                </div>
+
                                 <div class="grid grid-cols-2 gap-4">
                                     <div>
                                         <label class="block text-sm font-medium text-slate-700 mb-1">Mục tiêu (ETH) <span class="text-rose-500">*</span></label>
@@ -396,65 +399,7 @@
     </main>
 
     <script>
-        // Hàm xử lý quyên góp với MetaMask
-        async function handleDonation(campaignId, amountInEth) {
-            if (typeof window.ethereum !== 'undefined') {
-                try {
-                    const provider = new ethers.providers.Web3Provider(window.ethereum);
-                    await provider.send("eth_requestAccounts", []);
-                    const signer = provider.getSigner();
-                    const userWallet = await signer.getAddress();
-
-                    const contractAddress = "ĐỊA_CHỈ_SMART_CONTRACT_CỦA_BẠN";
-                    const contractABI = ["function donate(uint256 _campaignId) public payable"];
-                    const contract = new ethers.Contract(contractAddress, contractABI, signer);
-
-                    const amountWei = ethers.utils.parseEther(amountInEth.toString());
-                    const tx = await contract.donate(campaignId, { value: amountWei });
-                    
-                    console.log("Đang chờ xác nhận giao dịch...");
-                    const receipt = await tx.wait(); 
-                    
-                    const txHash = receipt.transactionHash;
-                    await saveToDatabase(campaignId, userWallet, amountInEth, txHash);
-
-                } catch (error) {
-                    console.error("Lỗi:", error);
-                    alert("Giao dịch bị hủy!");
-                }
-            } else {
-                alert("Vui lòng cài đặt MetaMask!");
-            }
-        }
-
-        async function saveToDatabase(campaignId, wallet, amount, txHash) {
-            const response = await fetch('/api/donations/save', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
-                },
-                body: JSON.stringify({ campaign_id: campaignId, wallet_address: wallet, amount: amount, tx_hash: txHash })
-            });
-
-            if (response.ok) {
-                alert("Thành công!");
-                window.location.reload(); 
-            }
-        }
-
-        // ================= XỬ LÝ NÚT SỬA & XÓA =================
-        function deleteFund(btn) {
-            // Hiển thị popup xác nhận
-            const isConfirm = confirm("Bạn có chắc chắn muốn xóa quỹ này không? Dữ liệu không thể khôi phục.");
-            if(isConfirm) {
-                // Xóa dòng tr chứa nút bấm đó
-                let row = btn.closest('tr');
-                row.remove();
-                alert("Đã xóa chiến dịch thành công!");
-            }
-        }
-
+        // ================= XỬ LÝ NÚT SỬA =================
         function openEditTab(btn) {
             // 1. Nhặt dữ liệu từ các thuộc tính data- của nút bấm
             document.getElementById('edit-fund-id').value = btn.getAttribute('data-id');
@@ -463,6 +408,9 @@
             document.getElementById('edit-fund-category').value = btn.getAttribute('data-category');
             document.getElementById('edit-fund-status').value = btn.getAttribute('data-status');
             document.getElementById('edit-fund-desc').value = btn.getAttribute('data-desc');
+            
+            // Lấy địa chỉ ví thụ hưởng đổ vào form sửa
+            document.getElementById('edit-fund-wallet').value = btn.getAttribute('data-wallet'); 
             
             // 2. Chuyển sang tab edit-quy
             const navItems = document.querySelectorAll('.nav-item');
@@ -481,15 +429,7 @@
             document.getElementById('header-subtitle').innerText = "Cập nhật lại thông tin chiến dịch đã chọn";
         }
 
-        function submitEdit(event) {
-            event.preventDefault(); // Chặn tải lại trang
-            alert('Cập nhật thông tin chiến dịch thành công!');
-            // Quay lại trang Quản lý
-            switchTab('quan-ly', document.querySelectorAll('.nav-item')[1]);
-        }
-        // ========================================================
-
-        // 1. Logic chuyển Tab (Menu chính)
+        // ================= XỬ LÝ CHUYỂN TAB =================
         function switchTab(tabId, element) {
             const navItems = document.querySelectorAll('.nav-item');
             navItems.forEach(item => {

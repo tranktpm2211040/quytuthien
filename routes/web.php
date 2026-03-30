@@ -28,6 +28,10 @@ Route::post('/save-donation', [FundController::class, 'saveDonation'])->name('do
 // Route lưu quyên góp từ MetaMask (API gọi ngầm bằng Javascript)
 Route::post('/donations/save', [DonationController::class, 'saveDonation']);
 
+// Route để mở trang ví MetaMask
+Route::get('/wallet', function () {
+    return view('wallet'); // Laravel sẽ tự động tìm file resources/views/wallet.blade.php
+})->name('wallet.show');
 
 // =========================================================================
 // 3. ROUTE THANH TOÁN (Cổng Checkout) - Phải để ngoài Admin

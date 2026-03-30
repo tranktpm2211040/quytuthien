@@ -14,6 +14,7 @@ class Campaign extends Model
         'contract_address',
         'title',
         'goal_eth',
+        'receiver_wallet',
         'category',
         'description',
         'image_url',
