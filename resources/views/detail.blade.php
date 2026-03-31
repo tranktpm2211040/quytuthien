@@ -335,7 +335,7 @@
             }
         }
         // ==============================================================
-        // HÀM: LẤY DỮ LIỆU TỪ SMART CONTRACT (TỔNG TIỀN) & EXPLORER (DANH SÁCH)
+        // HÀM LẤY DỮ LIỆU TỪ SMART CONTRACT & EXPLORER API (BẢN CHUẨN)
         // ==============================================================
         async function loadDonors() {
             const donorsContainer = document.getElementById('donor-list');
@@ -352,7 +352,7 @@
                 const provider = new ethers.JsonRpcProvider(rpcUrl);
 
                 // ----------------------------------------------------------
-                // 1. LẤY TỔNG TIỀN TRỰC TIẾP TỪ SMART CONTRACT (CHÍNH XÁC NHẤT)
+                // 1. LẤY TỔNG TIỀN TỪ SMART CONTRACT (Chính xác tuyệt đối)
                 // ----------------------------------------------------------
                 const contractABI = [{
                     "inputs": [{
@@ -399,27 +399,26 @@
                 const contract = new ethers.Contract(contractAddress, contractABI, provider);
                 const blockchainData = await contract.danhSachChienDich(campaignId);
 
-                // Tính tổng quyên góp = Tiền đang giữ + Tiền đã giải ngân
+                // Tính tổng = Đang giữ + Đã rút
                 const tongTienDangGiu = blockchainData[3];
                 const soTienDaRut = blockchainData[4];
                 const totalRaisedEth = parseFloat(ethers.formatEther(tongTienDangGiu + soTienDaRut));
 
-                // HIỂN THỊ SỐ TIỀN (KHÔNG HIỆN %)
+                // BƠM TIỀN LÊN GIAO DIỆN VÀ KÉO THANH PROGRESS
                 totalRaisedEl.innerText = totalRaisedEth.toFixed(4) + " ETH";
-
-                // Cập nhật thanh màu hồng (Tính toán ngầm để kéo dài thanh bar)
                 let percent = (totalRaisedEth / goalEth) * 100;
                 if (percent > 100) percent = 100;
                 progressBarEl.style.width = percent + "%";
 
 
                 // ----------------------------------------------------------
-                // 2. LẤY DANH SÁCH NGƯỜI ỦNG HỘ TỪ EXPLORER API
+                // 2. LẤY DANH SÁCH NGƯỜI ỦNG HỘ TỪ EXPLORER
                 // ----------------------------------------------------------
                 const apiUrl = `https://coston2-explorer.flare.network/api?module=logs&action=getLogs&address=${contractAddress}`;
                 const response = await fetch(apiUrl);
                 const data = await response.json();
 
+                // Nếu Explorer báo rỗng -> Chỉ hiển thị khung giỏ hàng rỗng, KHÔNG xóa số tiền
                 if (data.status !== "1" || !data.result || data.result.length === 0) {
                     donorsContainer.innerHTML = `
                         <div class="text-center py-5">
@@ -450,6 +449,7 @@
 
                 campaignLogs.reverse();
 
+                // Nếu có giao dịch nhưng không phải của quỹ này
                 if (campaignLogs.length === 0) {
                     donorsContainer.innerHTML = `
                         <div class="text-center py-5">
@@ -459,6 +459,7 @@
                     return;
                 }
 
+                // Render danh sách thành công
                 let html = '';
                 for (const log of campaignLogs) {
                     const shortAddress = log.donorAddress.substring(0, 6) + '...' + log.donorAddress.substring(38);
@@ -482,10 +483,14 @@
 
             } catch (error) {
                 console.error("Lỗi Blockchain:", error);
-                totalRaisedEl.innerText = "0 ETH";
-                donorsContainer.innerHTML = `<p class="text-center py-5 text-danger small">Không thể tải dữ liệu từ Blockchain.</p>`;
+                // Chỉ báo lỗi nhỏ dưới danh sách, không chạm vào tổng tiền bên trên
+                donorsContainer.innerHTML = `<p class="text-center py-5 text-danger small">Không thể tải danh sách lúc này.</p>`;
             }
         }
+        // ==============================================================
+        // 3. GỌI HÀM KHI TRANG TẢI XONG (BẮT BUỘC PHẢI CÓ)
+        // ==============================================================
+        document.addEventListener("DOMContentLoaded", loadDonors);
     </script>
 </body>
 
