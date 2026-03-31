@@ -26,7 +26,7 @@ Route::get('/detail/{id}', [FundController::class, 'detail'])->name('fund.detail
 Route::post('/save-donation', [FundController::class, 'saveDonation'])->name('donation.save');
 
 // Route lưu quyên góp từ MetaMask (API gọi ngầm bằng Javascript)
-Route::post('/donations/save', [DonationController::class, 'saveDonation']);
+Route::post('/api/chot-don-eth', [DonationController::class, 'saveDonation'])->name('donation.save.eth');
 
 // Route để mở trang ví MetaMask
 Route::get('/wallet', function () {

@@ -4,6 +4,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>Chi tiết dự án - {{ $campaign->title }}</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.5/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600;700&display=swap" rel="stylesheet">
@@ -178,17 +179,57 @@
                     <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#donors">Người ủng hộ</button></li>
                 </ul>
                 <div class="tab-content border-0 p-2">
-                    <div class="tab-pane fade show active" id="content">
-                        <h5 class="fw-bold mb-3 text-dark">Thông tin chi tiết</h5>
+                    <div class="tab-content border-0 p-2">
+                        <div class="tab-pane fade show active" id="content">
+                            <h5 class="fw-bold mb-3 text-dark">Thông tin chi tiết</h5>
 
-                        <div class="text-secondary mb-4" style="line-height: 1.8;">
-                            {!! nl2br(e($campaign->description)) !!}
+                            <div class="text-secondary mb-4" style="line-height: 1.8;">
+                                {!! nl2br(e($campaign->description)) !!}
+                            </div>
                         </div>
 
-                    </div>
-                    <div class="tab-pane fade text-center py-5" id="donors">
-                        <img src="https://cdn-icons-png.flaticon.com/512/102/102661.png" width="50" class="opacity-25 mb-3">
-                        <p class="text-secondary">Hãy là người đầu tiên ủng hộ dự án này!</p>
+                        <div class="tab-pane fade" id="donors">
+                            <h5 class="fw-bold mb-3 text-dark">Danh sách nhà hảo tâm</h5>
+
+                            @php
+                            // Kéo dữ liệu từ bảng donations theo ID của chiến dịch hiện tại, sắp xếp mới nhất lên đầu
+                            $lichSuQuyenGop = \App\Models\Donation::where('campaign_id', $campaign->id)
+                            ->orderBy('created_at', 'desc')
+                            ->get();
+                            @endphp
+
+                            @if($lichSuQuyenGop->count() > 0)
+                            <div class="donations-list">
+                                @foreach($lichSuQuyenGop as $don)
+                                <div class="d-flex align-items-center p-3 bg-white border rounded-3 shadow-sm mb-3 transition-all hover-shadow">
+
+                                    <div class="bg-light rounded-circle d-flex align-items-center justify-content-center me-3 border" style="width: 48px; height: 48px;">
+                                        <i class='bx bxs-heart text-gn-pink fs-4'></i>
+                                    </div>
+
+                                    <div class="flex-grow-1">
+                                        <h6 class="mb-1 fw-bold text-dark" style="font-size: 0.95rem;">Nhà hảo tâm ẩn danh</h6>
+                                        <span class="text-secondary small d-flex align-items-center gap-1">
+                                            <i class='bx bx-time'></i> {{ $don->created_at->format('H:i - d/m/Y') }}
+                                        </span>
+                                    </div>
+
+                                    <div class="text-end">
+                                        <span class="fw-bold fs-6" style="color: #10B981;">
+                                            +{{ number_format($don->amount_vnd, 0, ',', '.') }} VNĐ
+                                        </span>
+                                    </div>
+
+                                </div>
+                                @endforeach
+                            </div>
+                            @else
+                            <div class="text-center py-5">
+                                <img src="https://cdn-icons-png.flaticon.com/512/102/102661.png" width="50" class="opacity-25 mb-3">
+                                <p class="text-secondary fw-bold">Hãy là người đầu tiên ủng hộ dự án này!</p>
+                            </div>
+                            @endif
+                        </div>
                     </div>
                 </div>
             </div>
@@ -302,6 +343,46 @@
                 const receipt = await tx.wait();
                 const txHash = receipt.hash;
 
+                // ==============================================================
+                // BẮT ĐẦU LƯU VÀO DATABASE LARAVEL (CHẾ ĐỘ BẮT LỖI NGHIÊM NGẶT)
+                // ==============================================================
+                btnDonate.innerHTML = "<i class='bx bx-loader-alt bx-spin'></i> Đang lưu hệ thống...";
+                try {
+                    const response = await fetch('/api/chot-don-eth', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Accept': 'application/json',
+                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                        },
+                        body: JSON.stringify({
+                            campaign_id: parseInt(campaignId),
+                            amount_vnd: parseFloat(amountInput)
+                        })
+                    });
+
+                    // Đọc phản hồi từ máy chủ Laravel
+                    const result = await response.json();
+
+                    if (!response.ok) {
+                        // NẾU CÓ LỖI, NÓ SẼ CHẶN LẠI VÀ BÁO LÊN MÀN HÌNH!
+                        alert("LỖI MÁY CHỦ TỪ CHỐI LƯU: \n" + (result.message || JSON.stringify(result)));
+
+                        btnDonate.innerHTML = "<i class='bx bxs-heart'></i> Ủng hộ";
+                        btnDonate.disabled = false;
+                        return; // Dừng lại ngay, không cho hiện báo Thành công nữa
+                    }
+
+                } catch (dbError) {
+                    alert("LỖI MẠNG HOẶC TRÌNH DUYỆT: \n" + dbError.message);
+
+                    btnDonate.innerHTML = "<i class='bx bxs-heart'></i> Ủng hộ";
+                    btnDonate.disabled = false;
+                    return; // Dừng lại
+                }
+                // ==============================================================
+
+
                 // HIỂN THỊ THÔNG BÁO THÀNH CÔNG BẰNG SWEETALERT2
                 Swal.fire({
                     title: 'Thành công!',
@@ -334,6 +415,7 @@
                 }
             }
         }
+
         // ==============================================================
         // HÀM LẤY DỮ LIỆU TỪ SMART CONTRACT & EXPLORER API (BẢN CHUẨN)
         // ==============================================================
@@ -487,6 +569,7 @@
                 donorsContainer.innerHTML = `<p class="text-center py-5 text-danger small">Không thể tải danh sách lúc này.</p>`;
             }
         }
+
         // ==============================================================
         // 3. GỌI HÀM KHI TRANG TẢI XONG (BẮT BUỘC PHẢI CÓ)
         // ==============================================================
