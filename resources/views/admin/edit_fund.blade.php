@@ -116,16 +116,27 @@
         document.getElementById('edit-fund-status').value = btn.getAttribute('data-status');
         document.getElementById('edit-fund-desc').value = btn.getAttribute('data-desc');
         document.getElementById('edit-fund-wallet').value = btn.getAttribute('data-wallet');
-
-        // ĐÃ THÊM: Đổ dữ liệu Ngày Kết Thúc
         document.getElementById('edit-fund-end-date').value = btn.getAttribute('data-enddate');
 
-        document.getElementById('edit-image-preview').classList.add('hidden');
-        document.getElementById('edit-image-preview').src = "";
-        document.getElementById('edit-upload-text').classList.remove('hidden');
-
+        // ĐÃ THÊM: Bắt link ảnh cũ và hiển thị
+        const imageUrl = btn.getAttribute('data-image');
+        const preview = document.getElementById('edit-image-preview');
+        const uploadText = document.getElementById('edit-upload-text');
         const overlay = document.getElementById('edit-overlay');
-        if (overlay) overlay.classList.add('hidden');
+
+        if (imageUrl && imageUrl.trim() !== '') {
+            // Nếu có ảnh cũ -> Hiện ảnh, giấu chữ "Đổi ảnh mới", bật hiệu ứng hover
+            preview.src = imageUrl;
+            preview.classList.remove('hidden');
+            uploadText.classList.add('hidden');
+            if (overlay) overlay.classList.remove('hidden');
+        } else {
+            // Nếu không có ảnh cũ -> Reset về trạng thái trống
+            preview.src = "";
+            preview.classList.add('hidden');
+            uploadText.classList.remove('hidden');
+            if (overlay) overlay.classList.add('hidden');
+        }
 
         if (typeof switchTab === 'function') {
             switchTab('edit-quy', null);

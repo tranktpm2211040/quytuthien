@@ -248,6 +248,9 @@
                                         data-desc="{{ $campaign->description }}"
                                         data-wallet="{{ $campaign->receiver_wallet }}"
                                         data-enddate="{{ \Carbon\Carbon::parse($campaign->end_date)->format('Y-m-d') }}"
+
+                                        data-image="{{ $campaign->image_url ? asset($campaign->image_url) : '' }}"
+
                                         onclick="openEditTab(this)">
                                         <i class='bx bx-edit text-xl'></i>
                                     </button>
