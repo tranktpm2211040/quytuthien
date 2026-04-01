@@ -113,6 +113,7 @@ class FundController extends Controller
             $campaign->category = $request->category;
             $campaign->status = $request->status;
             $campaign->description = $request->description;
+            $campaign->end_date = $request->end_date;
             
             // Xử lý nếu người dùng có up ảnh mới
             if ($request->hasFile('image')) {

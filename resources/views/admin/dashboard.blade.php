@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>Admin - Quản lý Quỹ Từ Thiện</title>
+    <title>Admin - Nhóm dự án vì cộng đồng</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -184,38 +184,48 @@
                     </button>
                 </div>
 
+
+                <!-- quản lý quỹ -->
+
                 <div class="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden overflow-x-auto">
-                    <table class="w-full text-left whitespace-nowrap min-w-[1000px]">
-                        <thead class="bg-slate-50 border-b border-slate-100 text-xs text-slate-500 uppercase tracking-wider">
+                    <table class="w-full text-left whitespace-nowrap min-w-[1000px] table-fixed">
+                        <thead class="bg-slate-50 border-b border-slate-100 text-xs text-black font-bold uppercase tracking-wider">
                             <tr>
-                                <th class="px-6 py-4">Tên Quỹ</th>
-                                <th class="px-6 py-4 text-indigo-600">Mục tiêu (ETH)</th>
-                                <th class="px-6 py-4">Ví người nhận</th>
-                                <th class="px-6 py-4">Mô tả</th>
-                                <th class="px-6 py-4">Ngày kết thúc</th>
-                                <th class="px-6 py-4">Trạng thái</th>
-                                <th class="px-6 py-4 text-center">Hành động</th>
+                                <th class="px-4 py-4 w-[22%]">Tên Quỹ</th>
+                                <th class="px-4 py-4 w-[12%] text-indigo-600">Mục tiêu (ETH)</th>
+                                <th class="px-4 py-4 w-[13%]">Ví người nhận</th>
+                                <th class="px-4 py-4 w-[15%]">Mô tả</th>
+                                <th class="px-4 py-4 w-[10%] text-center">Ngày kết thúc</th>
+                                <th class="px-4 py-4 w-[10%] text-center">Trạng thái</th>
+                                <th class="px-4 py-4 w-[18%] text-center">Hành động</th>
                             </tr>
                         </thead>
                         <tbody class="divide-y divide-slate-100">
                             @foreach($campaigns as $campaign)
-                            <tr class="hover:bg-slate-50 group">
-                                <td class="px-6 py-4 font-semibold text-slate-800">{{ $campaign->title }}</td>
-                                <td class="px-6 py-4 font-bold text-indigo-600">{{ number_format($campaign->goal_eth, 2) }} ETH</td>
-                                <td class="px-6 py-4 font-mono text-xs text-slate-500" title="{{ $campaign->receiver_wallet }}">
+                            <tr class="hover:bg-slate-50 group transition-colors">
+                                <td class="px-4 py-4 font-semibold text-slate-800 truncate" title="{{ $campaign->title }}">
+                                    {{ $campaign->title }}
+                                </td>
+
+                                <td class="px-4 py-4 font-bold text-indigo-600">{{ number_format($campaign->goal_eth, 2) }} ETH</td>
+
+                                <td class="px-4 py-4 font-mono text-xs text-slate-500" title="{{ $campaign->receiver_wallet }}">
                                     @if($campaign->receiver_wallet)
                                     {{ substr($campaign->receiver_wallet, 0, 6) }}...{{ substr($campaign->receiver_wallet, -4) }}
                                     @else
                                     <span class="text-rose-400 italic">Chưa có</span>
                                     @endif
                                 </td>
-                                <td class="px-6 py-4">
-                                    <div class="max-w-[200px] truncate text-sm text-slate-500" title="{{ $campaign->description }}">
-                                        {{ \Illuminate\Support\Str::limit($campaign->description, 30) }}
+
+                                <td class="px-4 py-4">
+                                    <div class="w-full truncate text-sm text-slate-500" title="{{ $campaign->description }}">
+                                        {{ $campaign->description }}
                                     </div>
                                 </td>
-                                <td class="px-6 py-4 text-sm text-slate-500">{{ \Carbon\Carbon::parse($campaign->end_date)->format('d/m/Y') }}</td>
-                                <td class="px-6 py-4">
+
+                                <td class="px-4 py-4 text-sm text-slate-500 ">{{ \Carbon\Carbon::parse($campaign->end_date)->format('d/m/Y') }}</td>
+
+                                <td class="px-4 py-4 text-center">
                                     @if($campaign->status == 1)
                                     <span class="px-3 py-1 text-xs rounded-full bg-emerald-100 text-emerald-700">Đang hoạt động</span>
                                     @elseif($campaign->status == 2)
@@ -224,7 +234,8 @@
                                     <span class="px-3 py-1 text-xs rounded-full bg-slate-100 text-slate-700">Bản nháp</span>
                                     @endif
                                 </td>
-                                <td class="px-6 py-4 text-center">
+
+                                <td class="px-4 py-4 text-center">
                                     <a href="{{ route('admin.fund.detail', $campaign->id) }}" class="inline-block text-slate-400 hover:text-emerald-600 mx-1 transition-colors" title="Xem chi tiết">
                                         <i class='bx bx-show text-xl'></i>
                                     </a>
@@ -236,6 +247,7 @@
                                         data-status="{{ $campaign->status }}"
                                         data-desc="{{ $campaign->description }}"
                                         data-wallet="{{ $campaign->receiver_wallet }}"
+                                        data-enddate="{{ \Carbon\Carbon::parse($campaign->end_date)->format('Y-m-d') }}"
                                         onclick="openEditTab(this)">
                                         <i class='bx bx-edit text-xl'></i>
                                     </button>
@@ -248,7 +260,7 @@
 
                             @if($campaigns->isEmpty())
                             <tr>
-                                <td colspan="6" class="px-6 py-8 text-center text-slate-500">
+                                <td colspan="7" class="px-4 py-8 text-center text-slate-500">
                                     Chưa có chiến dịch nào trên hệ thống. Hãy tạo chiến dịch đầu tiên!
                                 </td>
                             </tr>
@@ -321,95 +333,12 @@
 
             @include('admin.create_fund')
 
-            <div id="edit-quy" class="page-section hidden p-8 fade-in">
-                <form action="{{ route('admin.fund.update') }}" method="POST" enctype="multipart/form-data" class="max-w-5xl mx-auto flex flex-col lg:flex-row gap-8">
-                    @csrf
-                    <input type="hidden" name="id" id="edit-fund-id">
-
-                    <div class="flex-1 space-y-6">
-                        <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100">
-                            <h2 class="text-lg font-bold text-slate-800 mb-4 border-b border-slate-100 pb-4">Cập nhật chiến dịch</h2>
-                            <div class="space-y-4">
-                                <div>
-                                    <label class="block text-sm font-medium text-slate-700 mb-1">Tên quỹ <span class="text-rose-500">*</span></label>
-                                    <input type="text" name="title" id="edit-fund-title" required class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-lg outline-none focus:border-indigo-500 text-sm">
-                                </div>
-
-                                <div>
-                                    <label class="block text-sm font-medium text-slate-700 mb-1">Ví người thụ hưởng (ETH) <span class="text-rose-500">*</span></label>
-                                    <input type="text" name="receiver_wallet" id="edit-fund-wallet" required class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-lg outline-none focus:border-indigo-500 text-sm font-mono">
-                                </div>
-
-                                <div class="grid grid-cols-2 gap-4">
-                                    <div>
-                                        <label class="block text-sm font-medium text-slate-700 mb-1">Mục tiêu (ETH) <span class="text-rose-500">*</span></label>
-                                        <input type="number" name="goal_eth" id="edit-fund-goal" step="0.01" min="0" required class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-lg outline-none focus:border-indigo-500 text-sm">
-                                    </div>
-                                    <div>
-                                        <label class="block text-sm font-medium text-slate-700 mb-1">Danh mục</label>
-                                        <select name="category" id="edit-fund-category" class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-lg outline-none focus:border-indigo-500 text-sm">
-                                            <option value="Giáo dục">Giáo dục</option>
-                                            <option value="Y tế">Y tế</option>
-                                            <option value="Môi trường">Môi trường</option>
-                                        </select>
-                                    </div>
-                                </div>
-                                <div>
-                                    <label class="block text-sm font-medium text-slate-700 mb-1">Trạng thái</label>
-                                    <select name="status" id="edit-fund-status" class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-lg outline-none focus:border-indigo-500 text-sm">
-                                        <option value="1">Đang hoạt động</option>
-                                        <option value="2">Hoàn thành</option>
-                                        <option value="0">Bản nháp</option>
-                                    </select>
-                                </div>
-                                <div>
-                                    <label class="block text-sm font-medium text-slate-700 mb-1">Mô tả chi tiết</label>
-                                    <textarea name="description" id="edit-fund-desc" rows="5" class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-lg outline-none focus:border-indigo-500 text-sm"></textarea>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="w-full lg:w-80 flex flex-col gap-6">
-                        <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100">
-                            <h2 class="text-base font-bold text-slate-800 mb-4">Hình ảnh đại diện</h2>
-                            <label class="flex flex-col items-center justify-center w-full h-40 border-2 border-slate-300 border-dashed rounded-xl cursor-pointer hover:border-indigo-400 bg-slate-50 transition-colors">
-                                <i class='bx bx-cloud-upload text-3xl text-indigo-400 mb-2'></i>
-                                <span class="text-sm text-slate-500">Đổi ảnh mới</span>
-                                <input type="file" name="image" class="hidden" accept="image/*" />
-                            </label>
-                        </div>
-                        <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100">
-                            <button type="submit" class="w-full px-4 py-3 bg-indigo-600 text-white text-sm font-semibold rounded-lg hover:bg-indigo-700 transition-all flex items-center justify-center gap-2 mb-3">
-                                <i class='bx bx-save'></i> Cập nhật Chiến Dịch
-                            </button>
-                            <button type="button" onclick="switchTab('quan-ly', document.querySelectorAll('.nav-item')[1])" class="w-full px-4 py-3 bg-white border border-slate-200 text-slate-600 text-sm font-semibold rounded-lg hover:bg-slate-50 transition-all flex items-center justify-center gap-2">
-                                Hủy bỏ
-                            </button>
-                        </div>
-                    </div>
-                </form>
-            </div>
+            @include('admin.edit_fund')
 
         </div>
     </main>
 
     <script>
-        // ================= XỬ LÝ NÚT SỬA =================
-        function openEditTab(btn) {
-            document.getElementById('edit-fund-id').value = btn.getAttribute('data-id');
-            document.getElementById('edit-fund-title').value = btn.getAttribute('data-title');
-            document.getElementById('edit-fund-goal').value = btn.getAttribute('data-goal');
-            document.getElementById('edit-fund-category').value = btn.getAttribute('data-category');
-            document.getElementById('edit-fund-status').value = btn.getAttribute('data-status');
-            document.getElementById('edit-fund-desc').value = btn.getAttribute('data-desc');
-            document.getElementById('edit-fund-wallet').value = btn.getAttribute('data-wallet');
-
-            switchTab('edit-quy', null);
-            document.getElementById('header-title').innerText = "Chỉnh sửa Quỹ Từ Thiện";
-            document.getElementById('header-subtitle').innerText = "Cập nhật lại thông tin chiến dịch đã chọn";
-        }
-
         // ================= XỬ LÝ CHUYỂN TAB =================
         function switchTab(tabId, element) {
             const navItems = document.querySelectorAll('.nav-item');
