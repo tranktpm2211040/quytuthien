@@ -99,7 +99,7 @@
             </button>
         </div>
     </aside>
-
+    <!-- hệ thống -->
     <main class="flex-1 flex flex-col h-screen overflow-hidden relative">
         <header class="h-20 bg-white shadow-sm flex items-center justify-between px-8 z-10 shrink-0">
             <div>
@@ -170,6 +170,8 @@
                     </div>
                 </div>
             </div>
+
+            <!-- Tạo quỹ mới -->
 
             <div id="quan-ly" class="page-section hidden p-8 fade-in">
                 <div class="flex justify-between items-center mb-6">
@@ -256,6 +258,7 @@
                 </div>
             </div>
 
+            <!-- lịch sử quyên góp -->
             <div id="lich-su" class="page-section hidden p-8 fade-in">
                 <div class="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden">
                     <div class="p-6 border-b border-slate-100">
@@ -271,18 +274,46 @@
                             </tr>
                         </thead>
                         <tbody class="divide-y divide-slate-100 text-sm">
+
+                            @php
+                            // Kéo toàn bộ danh sách quyên góp, mới nhất xếp lên trên
+                            $tatCaGiaoDich = \App\Models\Donation::orderBy('created_at', 'desc')->get();
+                            @endphp
+
+                            @forelse($tatCaGiaoDich as $gd)
+                            @php
+                            // Đổi ngược VNĐ ra ETH (Tỷ giá tạm tính: 1 ETH = 80.000.000 VNĐ)
+                            $soEth = $gd->amount_vnd / 80000000;
+                            @endphp
                             <tr class="hover:bg-slate-50">
-                                <td class="px-6 py-4 font-mono text-slate-600">0x71C...9A23</td>
-                                <td class="px-6 py-4 font-bold text-emerald-600">+ 0.5 ETH</td>
-                                <td class="px-6 py-4 text-slate-800">Xây Trường Vùng Cao</td>
-                                <td class="px-6 py-4 text-slate-500">10 phút trước</td>
+                                <td class="px-6 py-4 font-mono text-slate-600">
+                                    <span class="bg-slate-100 px-2 py-1 rounded text-xs">Ẩn danh</span>
+                                </td>
+
+                                <td class="px-6 py-4 font-bold text-emerald-600">
+                                    + {{ number_format($soEth, 4) }} ETH
+                                    <span class="block text-xs text-slate-400 font-normal mt-1">
+                                        ({{ number_format($gd->amount_vnd, 0, ',', '.') }} đ)
+                                    </span>
+                                </td>
+
+                                <td class="px-6 py-4 text-slate-800 font-medium">
+                                    {{ $gd->campaign_title }}
+                                </td>
+
+                                <td class="px-6 py-4 text-slate-500">
+                                    {{ \Carbon\Carbon::parse($gd->created_at)->locale('vi')->diffForHumans() }}
+                                </td>
                             </tr>
-                            <tr class="hover:bg-slate-50">
-                                <td class="px-6 py-4 font-mono text-slate-600">0x33A...4F11</td>
-                                <td class="px-6 py-4 font-bold text-emerald-600">+ 1.2 ETH</td>
-                                <td class="px-6 py-4 text-slate-800">Quỹ Y Tế Cộng Đồng</td>
-                                <td class="px-6 py-4 text-slate-500">2 giờ trước</td>
+                            @empty
+                            <tr>
+                                <td colspan="4" class="px-6 py-10 text-center text-slate-500">
+                                    <i class='bx bx-receipt fs-2 mb-2 text-slate-300 d-block'></i>
+                                    Chưa có giao dịch quyên góp nào.
+                                </td>
                             </tr>
+                            @endforelse
+
                         </tbody>
                     </table>
                 </div>
