@@ -22,8 +22,8 @@ $nextId = $latestCampaign ? $latestCampaign->id + 1 : 1;
                 <h2 class="text-lg font-bold text-slate-800 mb-4 border-b border-slate-100 pb-4">Thông tin chiến dịch</h2>
                 <div class="space-y-4">
                     <div>
-                        <label class="block text-sm font-medium text-slate-700 mb-1">Tên quỹ <span class="text-rose-500">*</span></label>
-                        <input type="text" name="title" placeholder="Nhập tên quỹ..." required class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-lg outline-none focus:border-indigo-500 text-sm">
+                        <label class="block text-sm font-medium text-slate-700 mb-1">Tên chiến dịch <span class="text-rose-500">*</span></label>
+                        <input type="text" name="title" placeholder="Nhập tên chiến dịch..." required class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-lg outline-none focus:border-indigo-500 text-sm">
                     </div>
 
                     <div>

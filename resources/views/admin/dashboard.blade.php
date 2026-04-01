@@ -65,7 +65,7 @@
     <aside class="w-72 bg-[#0f172a] text-slate-300 flex flex-col transition-all duration-300 shadow-2xl z-20">
         <div class="h-20 flex items-center px-8 border-b border-slate-700/50">
             <i class='bx bxs-donate-heart text-3xl text-indigo-500 mr-3'></i>
-            <span class="text-xl font-bold text-white tracking-wide">GiveNow Admin</span>
+            <span class="text-xl font-bold text-white tracking-wide">Charity DApp</span>
         </div>
 
         <nav class="flex-1 px-4 py-6 space-y-2 overflow-y-auto" id="sidebar-menu">
@@ -76,7 +76,7 @@
 
             <a href="#" onclick="switchTab('quan-ly', this)" class="nav-item flex items-center px-4 py-3 rounded-xl hover:bg-slate-800 hover:text-white transition-colors group">
                 <i class='bx bx-wallet text-xl mr-3 group-hover:text-indigo-400 transition-colors'></i>
-                <span class="font-medium">Quản lý Quỹ</span>
+                <span class="font-medium">Quản lý Chiến Dịch</span>
             </a>
 
             <a href="#" onclick="switchTab('lich-su', this)" class="nav-item flex items-center px-4 py-3 rounded-xl hover:bg-slate-800 hover:text-white transition-colors group">
@@ -87,7 +87,7 @@
             <div class="pt-4 mt-4 border-t border-slate-700/50">
                 <a href="#" onclick="switchTab('tao-quy', this)" class="nav-item flex items-center px-4 py-3 rounded-xl border border-slate-600 border-dashed hover:border-indigo-400 hover:bg-slate-800 hover:text-indigo-300 transition-all group">
                     <i class='bx bx-plus-circle text-xl mr-3 group-hover:text-indigo-400'></i>
-                    <span class="font-medium">Tạo Quỹ Mới</span>
+                    <span class="font-medium">Tạo Chiến Dịch Mới</span>
                 </a>
             </div>
         </nav>
@@ -140,7 +140,7 @@
                     <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100">
                         <div class="flex items-center justify-between">
                             <div>
-                                <p class="text-sm font-medium text-slate-500 mb-1">Quỹ Đang Hoạt Động</p>
+                                <p class="text-sm font-medium text-slate-500 mb-1">Chiến Dịch Đang Hoạt Động</p>
                                 <h3 class="text-3xl font-bold text-slate-800">08</h3>
                             </div>
                             <div class="w-12 h-12 rounded-full bg-blue-100 flex items-center justify-center text-blue-600">
@@ -163,7 +163,7 @@
 
                 <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 fade-in delay-100">
                     <div class="flex justify-between items-center mb-6">
-                        <h2 class="text-lg font-bold text-slate-800">Thống kê mục tiêu các quỹ</h2>
+                        <h2 class="text-lg font-bold text-slate-800">Thống kê mục tiêu các chiến dịch</h2>
                     </div>
                     <div class="relative h-[400px] w-full">
                         <canvas id="fundChart"></canvas>
@@ -177,10 +177,10 @@
                 <div class="flex justify-between items-center mb-6">
                     <div class="relative w-72">
                         <i class='bx bx-search absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-400'></i>
-                        <input type="text" placeholder="Tìm kiếm quỹ..." class="w-full pl-10 pr-4 py-2 border border-slate-200 rounded-lg focus:border-indigo-500 outline-none text-sm">
+                        <input type="text" placeholder="Tìm kiếm chiến dịch..." class="w-full pl-10 pr-4 py-2 border border-slate-200 rounded-lg focus:border-indigo-500 outline-none text-sm">
                     </div>
                     <button onclick="switchTab('tao-quy', document.querySelectorAll('.nav-item')[3])" class="px-5 py-2.5 bg-indigo-600 text-white text-sm font-medium rounded-lg hover:bg-indigo-700 transition-all flex items-center gap-2">
-                        <i class='bx bx-plus'></i> Tạo Quỹ Mới
+                        <i class='bx bx-plus'></i> Tạo Chiến Dịch Mới
                     </button>
                 </div>
 
@@ -191,7 +191,7 @@
                     <table class="w-full text-left whitespace-nowrap min-w-[1000px] table-fixed">
                         <thead class="bg-slate-50 border-b border-slate-100 text-xs text-black font-bold uppercase tracking-wider">
                             <tr>
-                                <th class="px-4 py-4 w-[22%]">Tên Quỹ</th>
+                                <th class="px-4 py-4 w-[22%]">Tên Chiến Dịch</th>
                                 <th class="px-4 py-4 w-[12%] text-indigo-600">Mục tiêu (ETH)</th>
                                 <th class="px-4 py-4 w-[13%]">Ví người nhận</th>
                                 <th class="px-4 py-4 w-[15%]">Mô tả</th>
@@ -254,7 +254,7 @@
                                         onclick="openEditTab(this)">
                                         <i class='bx bx-edit text-xl'></i>
                                     </button>
-                                    <a href="{{ route('admin.fund.delete', $campaign->id) }}" onclick="return confirm('Bạn có chắc chắn muốn xóa quỹ này không? Dữ liệu không thể khôi phục.')" class="inline-block text-slate-400 hover:text-rose-600 mx-1 transition-colors" title="Xóa">
+                                    <a href="{{ route('admin.fund.delete', $campaign->id) }}" onclick="return confirm('Bạn có chắc chắn muốn xóa chiến dịch này không? Dữ liệu không thể khôi phục.')" class="inline-block text-slate-400 hover:text-rose-600 mx-1 transition-colors" title="Xóa">
                                         <i class='bx bx-trash text-xl'></i>
                                     </a>
                                 </td>
@@ -284,7 +284,7 @@
                             <tr>
                                 <th class="px-6 py-4">Mã Ví (Wallet)</th>
                                 <th class="px-6 py-4">Số lượng</th>
-                                <th class="px-6 py-4">Quỹ ủng hộ</th>
+                                <th class="px-6 py-4">Chiến dịch ủng hộ</th>
                                 <th class="px-6 py-4">Thời gian</th>
                             </tr>
                         </thead>
@@ -368,7 +368,7 @@
                     sub: 'Theo dõi tiến độ và các khoản quyên góp'
                 },
                 'quan-ly': {
-                    title: 'Quản lý Quỹ Từ Thiện',
+                    title: 'Quản lý Chiến Dịch Từ Thiện',
                     sub: 'Quản lý, chỉnh sửa và theo dõi trạng thái'
                 },
                 'lich-su': {
@@ -377,10 +377,10 @@
                 },
                 'tao-quy': {
                     title: 'Tạo Chiến Dịch Mới',
-                    sub: 'Khởi tạo một quỹ từ thiện mới lên hệ thống'
+                    sub: 'Khởi tạo một chiến dịch từ thiện mới lên hệ thống'
                 },
                 'edit-quy': {
-                    title: 'Chỉnh sửa Quỹ Từ Thiện',
+                    title: 'Chỉnh sửa Chiến Dịch Từ Thiện',
                     sub: 'Cập nhật lại thông tin chiến dịch đã chọn'
                 }
             };

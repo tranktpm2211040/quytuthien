@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>Chi tiết quỹ #{{ $campaign->id }} - Admin</title>
+    <title>Chi tiết chiến dịch #{{ $campaign->id }} - Admin</title>
 
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet">
@@ -58,7 +58,7 @@
     <aside class="w-72 bg-[#0f172a] text-slate-300 flex flex-col transition-all duration-300 shadow-2xl z-20 shrink-0">
         <div class="h-20 flex items-center px-8 border-b border-slate-700/50">
             <i class='bx bxs-donate-heart text-3xl text-indigo-500 mr-3'></i>
-            <span class="text-xl font-bold text-white tracking-wide">GiveNow Admin</span>
+            <span class="text-xl font-bold text-white tracking-wide">Charity DApp</span>
         </div>
 
         <nav class="flex-1 px-4 py-6 space-y-2 overflow-y-auto">
@@ -69,7 +69,7 @@
 
             <a href="#" class="nav-item flex items-center px-4 py-3 bg-gradient-to-r from-indigo-500 to-purple-600 text-white rounded-xl shadow-lg shadow-indigo-500/30 transition-all hover:scale-[1.02]">
                 <i class='bx bxs-detail text-xl mr-3'></i>
-                <span class="font-medium">Chi Tiết Quỹ #{{ $campaign->id }}</span>
+                <span class="font-medium">Chi Tiết Chiến Dịch #{{ $campaign->id }}</span>
             </a>
         </nav>
 
@@ -173,7 +173,7 @@
 
                             <div id="sc-data" class="space-y-4 hidden relative z-10">
                                 <div class="bg-slate-800/50 p-3 rounded-xl border border-slate-700 backdrop-blur-sm">
-                                    <p class="text-xs text-slate-400 mb-1">Số dư đang giữ trong Quỹ</p>
+                                    <p class="text-xs text-slate-400 mb-1">Số dư đang giữ trong Chiến Dịch</p>
                                     <p class="text-xl font-bold text-emerald-400" id="sc_tong_tien">-- ETH</p>
                                 </div>
 

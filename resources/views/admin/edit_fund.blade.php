@@ -8,7 +8,7 @@
                 <h2 class="text-lg font-bold text-slate-800 mb-4 border-b border-slate-100 pb-4">Cập nhật chiến dịch</h2>
                 <div class="space-y-4">
                     <div>
-                        <label class="block text-sm font-medium text-slate-700 mb-1">Tên quỹ <span class="text-rose-500">*</span></label>
+                        <label class="block text-sm font-medium text-slate-700 mb-1">Tên chiến dịch <span class="text-rose-500">*</span></label>
                         <input type="text" name="title" id="edit-fund-title" required class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-lg outline-none focus:border-indigo-500 text-sm">
                     </div>
 
@@ -140,7 +140,7 @@
 
         if (typeof switchTab === 'function') {
             switchTab('edit-quy', null);
-            document.getElementById('header-title').innerText = "Chỉnh sửa Quỹ Từ Thiện";
+            document.getElementById('header-title').innerText = "Chỉnh sửa Chiến Dịch Từ Thiện";
             document.getElementById('header-subtitle').innerText = "Cập nhật lại thông tin chiến dịch đã chọn";
         }
     }
