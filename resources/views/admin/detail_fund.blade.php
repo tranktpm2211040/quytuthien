@@ -225,7 +225,7 @@
                 const contractAddress = "{{ env('SMART_CONTRACT_ADDRESS') }}";
                 const campaignId = parseInt("{{ $campaign->id }}");
 
-                // 3. ABI hàm danhSachChienDich (ĐÃ XÓA thoiGianKetThuc)
+                // 3. ABI hàm danhSachChienDich 
                 const contractABI = [{
                     "inputs": [{
                         "internalType": "uint256",

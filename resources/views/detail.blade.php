@@ -159,7 +159,7 @@
                             </div>
                         </div>
                         <div class="col-6 col-md-7">
-                            <button onclick="donateNow()" id="btn-donate" class="btn btn-gn-pink w-100 h-100">
+                            <button onclick="quyenGop()" id="btn-donate" class="btn btn-gn-pink w-100 h-100">
                                 <i class='bx bxs-heart'></i> Ủng hộ
                             </button>
                         </div>
@@ -253,7 +253,7 @@
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
     <script>
-        async function donateNow() {
+        async function quyenGop() {
             const amountInput = document.getElementById('donation-amount').value;
             const btnDonate = document.getElementById('btn-donate');
 
@@ -279,9 +279,9 @@
                 const ethRate = 80000000;
                 const ethAmount = (amountInput / ethRate).toFixed(6);
 
-                // ==============================================================
-                // HIỂN THỊ HỘP THOẠI XÁC NHẬN SIÊU ĐẸP (SWEETALERT2)
-                // ==============================================================
+               
+                // HIỂN THỊ HỘP THOẠI XÁC NHẬN
+              
                 const confirmResult = await Swal.fire({
                     title: 'Xác nhận quyên góp',
                     html: `
@@ -311,7 +311,7 @@
 
                 const contractAddress = "{{ env('SMART_CONTRACT_ADDRESS') }}";
 
-                // Xóa thoiGianKetThuc ở hàm taoChienDich, nhưng ở hàm quyenGop vẫn chỉ có _idChienDich
+                // Hàm ABI Cua hàm quyenGop
                 const contractABI = [{
                     "inputs": [{
                         "internalType": "uint256",
@@ -343,9 +343,8 @@
                 const receipt = await tx.wait();
                 const txHash = receipt.hash;
 
-                // ==============================================================
+            
                 // BẮT ĐẦU LƯU VÀO DATABASE LARAVEL (CHẾ ĐỘ BẮT LỖI NGHIÊM NGẶT)
-                // ==============================================================
                 btnDonate.innerHTML = "<i class='bx bx-loader-alt bx-spin'></i> Đang lưu hệ thống...";
                 try {
                     const response = await fetch('/api/chot-don-eth', {
@@ -416,10 +415,8 @@
             }
         }
 
-        // ==============================================================
-        // HÀM LẤY DỮ LIỆU TỪ SMART CONTRACT & EXPLORER API (BẢN CHUẨN)
-        // ==============================================================
-        async function loadDonors() {
+        // HÀM LẤY DỮ LIỆU TỪ SMART CONTRACT & EXPLORER API 
+        async function layDanhSachNguoiUngHo() {
             const donorsContainer = document.getElementById('donor-list');
             const totalRaisedEl = document.getElementById('total-raised');
             const progressBarEl = document.getElementById('progress-bar');
@@ -433,9 +430,7 @@
                 const rpcUrl = "https://coston2-api.flare.network/ext/C/rpc";
                 const provider = new ethers.JsonRpcProvider(rpcUrl);
 
-                // ----------------------------------------------------------
                 // 1. LẤY TỔNG TIỀN TỪ SMART CONTRACT (Chính xác tuyệt đối)
-                // ----------------------------------------------------------
                 const contractABI = [{
                     "inputs": [{
                         "internalType": "uint256",
@@ -493,9 +488,7 @@
                 progressBarEl.style.width = percent + "%";
 
 
-                // ----------------------------------------------------------
                 // 2. LẤY DANH SÁCH NGƯỜI ỦNG HỘ TỪ EXPLORER
-                // ----------------------------------------------------------
                 const apiUrl = `https://coston2-explorer.flare.network/api?module=logs&action=getLogs&address=${contractAddress}`;
                 const response = await fetch(apiUrl);
                 const data = await response.json();
@@ -570,10 +563,8 @@
             }
         }
 
-        // ==============================================================
         // 3. GỌI HÀM KHI TRANG TẢI XONG (BẮT BUỘC PHẢI CÓ)
-        // ==============================================================
-        document.addEventListener("DOMContentLoaded", loadDonors);
+        document.addEventListener("DOMContentLoaded", layDanhSachNguoiUngHo);
     </script>
 </body>
 

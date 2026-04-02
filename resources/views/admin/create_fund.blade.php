@@ -15,7 +15,7 @@ $nextId = $latestCampaign ? $latestCampaign->id + 1 : 1;
     </div>
     @endif
 
-    <form id="createFundForm" action="{{ route('admin.fund.store') }}" method="POST" enctype="multipart/form-data" class="max-w-5xl mx-auto flex flex-col lg:flex-row gap-8">
+    <form id="formTaoChienDich" action="{{ route('admin.fund.store') }}" method="POST" enctype="multipart/form-data" class="max-w-5xl mx-auto flex flex-col lg:flex-row gap-8">
         @csrf
         <div class="flex-1 space-y-6">
             <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100">
@@ -111,7 +111,7 @@ $nextId = $latestCampaign ? $latestCampaign->id + 1 : 1;
         // Chặn luồng gửi dữ liệu mặc định để xử lý Web3 trước
         e.preventDefault();
 
-        const formElement = document.getElementById('createFundForm');
+        const formElement = document.getElementById('formTaoChienDich');
 
         // Kiểm tra xem các ô bắt buộc (*) đã nhập đủ chưa
         if (!formElement.checkValidity()) {
